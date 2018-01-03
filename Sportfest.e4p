@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Project SYSTEM "Project-5.1.dtd">
+<!-- eric project file for project Sportfest -->
+<!-- Saved: 2018-01-01, 13:11:59 -->
+<!-- Copyright (C) 2018 Fabian Schillig, xorgmc@gmail.com -->
+<Project version="5.1">
+  <Language>en_US</Language>
+  <Hash>ca30b1148bbfb46c3ad71a07ef6fbbdad4e867e2</Hash>
+  <ProgLanguage mixed="0">Python3</ProgLanguage>
+  <ProjectType>PyQt5</ProjectType>
+  <Version>0.1</Version>
+  <Author>Fabian Schillig</Author>
+  <Email>xorgmc@gmail.com</Email>
+  <Sources>
+    <Source>Configuration.py</Source>
+    <Source>FTableWidget.py</Source>
+    <Source>Ui_main.py</Source>
+    <Source>__init__.py</Source>
+    <Source>lib/CalcNote.py</Source>
+    <Source>lib/CalcPoints.py</Source>
+    <Source>lib/Constants.py</Source>
+    <Source>lib/Delegates.py</Source>
+    <Source>lib/JTableLoader.py</Source>
+    <Source>lib/NameUtil.py</Source>
+    <Source>lib/SchuelerDataholder.py</Source>
+    <Source>lib/__init__.py</Source>
+    <Source>lib/debug.py</Source>
+    <Source>main.py</Source>
+    <Source>oxyicons_rc.py</Source>
+    <Source>ui/CustomSortDialog.py</Source>
+    <Source>ui/DatabaseForm.py</Source>
+    <Source>ui/EvaluateForm.py</Source>
+    <Source>ui/ExcelDialog.py</Source>
+    <Source>ui/ExportDialog.py</Source>
+    <Source>ui/GeschlechtInputDialog.py</Source>
+    <Source>ui/KlasseInputDialog.py</Source>
+    <Source>ui/MainForm.py</Source>
+    <Source>ui/Settings.py</Source>
+    <Source>ui/SettingsDialog.py</Source>
+    <Source>ui/TimerMessageBox.py</Source>
+    <Source>ui/Ui_CustomSortDialog.py</Source>
+    <Source>ui/Ui_DatabaseForm.py</Source>
+    <Source>ui/Ui_EvaluateForm.py</Source>
+    <Source>ui/Ui_ExcelDialog.py</Source>
+    <Source>ui/Ui_ExportDialog.py</Source>
+    <Source>ui/Ui_GeschlechtInputDialog.py</Source>
+    <Source>ui/Ui_KlasseInputDialog.py</Source>
+    <Source>ui/Ui_MainForm.py</Source>
+    <Source>ui/Ui_Settings.py</Source>
+    <Source>ui/Ui_SettingsDialog.py</Source>
+    <Source>ui/__init__.py</Source>
+  </Sources>
+  <Forms>
+    <Form>main.ui</Form>
+    <Form>ui/CustomSortDialog.ui</Form>
+    <Form>ui/DatabaseForm.ui</Form>
+    <Form>ui/EvaluateForm.ui</Form>
+    <Form>ui/ExcelDialog.ui</Form>
+    <Form>ui/ExportDialog.ui</Form>
+    <Form>ui/GeschlechtInputDialog.ui</Form>
+    <Form>ui/KlasseInputDialog.ui</Form>
+    <Form>ui/MainForm.ui</Form>
+    <Form>ui/Settings.ui</Form>
+    <Form>ui/SettingsDialog.ui</Form>
+  </Forms>
+  <Translations/>
+  <Resources>
+    <Resource>oxygen.qrc</Resource>
+    <Resource>oxyicons.qrc</Resource>
+  </Resources>
+  <Interfaces/>
+  <Others/>
+  <MainScript>main.py</MainScript>
+  <Vcs>
+    <VcsType>None</VcsType>
+    <VcsOptions>
+      <dict>
+        <key>
+          <string>add</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>checkout</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>commit</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>diff</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>export</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>global</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>history</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>log</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>remove</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>status</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>tag</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+        <key>
+          <string>update</string>
+        </key>
+        <value>
+          <list>
+            <string></string>
+          </list>
+        </value>
+      </dict>
+    </VcsOptions>
+  </Vcs>
+  <FiletypeAssociations>
+    <FiletypeAssociation pattern="*.e4p" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.idl" type="INTERFACES"/>
+    <FiletypeAssociation pattern="*.md" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.py" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.py3" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.pyw" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.pyw3" type="SOURCES"/>
+    <FiletypeAssociation pattern="*.qm" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.qrc" type="RESOURCES"/>
+    <FiletypeAssociation pattern="*.rst" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.ts" type="TRANSLATIONS"/>
+    <FiletypeAssociation pattern="*.txt" type="OTHERS"/>
+    <FiletypeAssociation pattern="*.ui" type="FORMS"/>
+    <FiletypeAssociation pattern="README" type="OTHERS"/>
+    <FiletypeAssociation pattern="README.*" type="OTHERS"/>
+  </FiletypeAssociations>
+</Project>

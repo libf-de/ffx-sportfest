@@ -1,0 +1,4 @@
+Dies ist eine Entwicklungsversion und nicht für den praktischen Einsatz gedacht!
+Sie sollte nur zum Testen und nicht weiterverbreitet werden! 
+Das Programm kann instabil laufen (abstürzen) und einige Funktionen sind
+noch nicht verfügbar.

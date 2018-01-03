@@ -1,0 +1,39 @@
+<RCC>
+  <qresource prefix="menu_icons_16">
+    <file alias="add">oxygen/16x16/actions/list-add.png</file>
+    <file alias="up">oxygen/16x16/actions/arrow-up.png</file>
+    <file alias="down">oxygen/16x16/actions/arrow-down.png</file>
+    <file alias="remove">oxygen/16x16/actions/list-remove.png</file>
+    <file alias="settings">oxygen/16x16/categories/preferences-system.png</file>
+    <file alias="new">oxygen/16x16/actions/document-new.png</file>
+    <file alias="fromexcel">oxygen/16x16/actions/svn-update.png</file>
+    <file alias="export">oxygen/16x16/actions/document-export.png</file>
+    <file alias="import">oxygen/16x16/actions/document-import.png</file>
+    <file alias="help">oxygen/16x16/actions/help-contents.png</file>
+    <file alias="about">oxygen/16x16/actions/help-about.png</file>
+    <file alias="open">oxygen/16x16/actions/document-open-data.png</file>
+    <file alias="save">oxygen/16x16/actions/document-save.png</file>
+    <file alias="save-as">oxygen/16x16/actions/document-save-as.png</file>
+    <file alias="exit">oxygen/16x16/actions/application-exit.png</file>
+    <file alias="database">oxygen/16x16/places/server-database.png</file>
+  </qresource>
+  <qresource prefix="toolbar_icons_48">
+    <file alias="sort">oxygen/48x48/actions/view-sort-ascending.png</file>
+    <file alias="addstudent">oxygen/48x48/actions/list-add-user.png</file>
+    <file alias="delstudent">oxygen/48x48/actions/list-remove-user.png</file>
+    <file alias="graduate">oxygen/48x48/actions/go-up-search.png</file>
+    <file alias="exitlg">oxygen/48x48/actions/application-exit.png</file>
+    <file alias="refresh">oxygen/48x48/actions/view-refresh.png</file>
+    <file alias="calc">oxygen/48x48/apps/accessories-calculator.png</file>
+    <file alias="favorites">oxygen/48x48/places/favorites.png</file>
+    <file alias="print">oxygen/48x48/actions/document-print.png</file>
+    <file alias="printpreview">oxygen/48x48/actions/document-print-preview.png</file>
+    <file alias="urkunde">oxygen/48x48/actions/document-edit-sign.png</file>
+  </qresource>
+  <qresource prefix="appicons">
+    <file alias="qt">qt.png</file>
+    <file alias="dbedit">oxygen/256x256/places/server-database.png</file>
+    <file alias="auswertung">auswertung.png</file>
+    <file alias="main">icon.png</file>
+  </qresource>
+</RCC>

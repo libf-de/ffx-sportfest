@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1024</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Auswertung - FFSportfest</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../oxyicons.qrc">
+    <normaloff>:/appicons/auswertung</normaloff>:/appicons/auswertung</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Filter</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Zeige... </string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="filterFirstCombo">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>0</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>alle Schüler</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Jungen</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Mädchen</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QComboBox" name="filterSecondCombo">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>0</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>aller Klassen</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>der 5. Klassen</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>der Klasse 5.1</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="title">
+       <string>Sortierung</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Sortiere erst nach...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>... und dann nach ...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="sortFirstCombo"/>
+       </item>
+       <item row="0" column="3">
+        <widget class="QComboBox" name="sortSecondCombo"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <widget class="QTableWidget" name="tableWidget"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::AllToolBarAreas</set>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextBesideIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRefreshData"/>
+   <addaction name="actionRecalc"/>
+   <addaction name="actionRePlace"/>
+   <addaction name="actionPPreview"/>
+   <addaction name="actionDoPrint"/>
+   <addaction name="actionUrkunde"/>
+   <addaction name="separator"/>
+   <addaction name="actionClose"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionRefreshData">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/refresh</normaloff>
+     <disabledon>:/themes/oxygen/32x32/actions/view-refresh.png</disabledon>:/toolbar_icons_48/refresh</iconset>
+   </property>
+   <property name="text">
+    <string>Daten aktualisieren</string>
+   </property>
+   <property name="iconText">
+    <string> Daten aktualisieren</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ruft die Daten manuell aus dem Hauptfenster ab. Verwenden Sie diese Funktion wenn die Daten nicht automatisch übertragen werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionRecalc">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/calc</normaloff>
+     <disabledon>:/themes/oxygen/128x128/apps/accessories-calculator.png</disabledon>:/toolbar_icons_48/calc</iconset>
+   </property>
+   <property name="text">
+    <string>Neu berechnen</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Berechnet die Punkte und Noten erneut. Dies sollte normalerweise automatisch passieren, es kann aber mit dieser Funktion erzwungen werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionRePlace">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/favorites</normaloff>
+     <disabledon>:/themes/oxygen/128x128/places/favorites.png</disabledon>:/toolbar_icons_48/favorites</iconset>
+   </property>
+   <property name="text">
+    <string>Platzier. neu ermitteln</string>
+   </property>
+   <property name="iconText">
+    <string> Platzier. neu ermitteln</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ermittelt die Platzierungen für den ausgewählten Filter neu. Dies passiert normalerweise automatisch, kann aber mit dieser Funktion erzwungen werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionPPreview">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/printpreview</normaloff>
+     <disabledon>:/themes/oxygen/48x48/actions/document-print-preview.png</disabledon>:/toolbar_icons_48/printpreview</iconset>
+   </property>
+   <property name="text">
+    <string>Druckvorschau</string>
+   </property>
+   <property name="iconText">
+    <string> Druckvorschau</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Zeigt eine Vorschau des Ausdrucks.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="actionDoPrint">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/print</normaloff>:/toolbar_icons_48/print</iconset>
+   </property>
+   <property name="text">
+    <string>Drucken</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Druckt die Ergebnisse mit dem ausgewählten Filter und Sortierung. Eine Vorschau des Ausdrucks kann mit &lt;span style=&quot; font-style:italic;&quot;&gt;Druckvorschau&lt;/span&gt; angezeigt werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/exitlg</normaloff>:/toolbar_icons_48/exitlg</iconset>
+   </property>
+   <property name="text">
+    <string>Schließen</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Schließt das Auswertungsfenster.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
+  </action>
+  <action name="actionUrkunde">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/urkunde</normaloff>:/toolbar_icons_48/urkunde</iconset>
+   </property>
+   <property name="text">
+    <string>Urkunden erstellen</string>
+   </property>
+   <property name="toolTip">
+    <string>Erstellt Urkunden (beta)</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../oxyicons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
