@@ -68,7 +68,7 @@ class SettingsDialog(QDialog, Ui_Dialog):
         """
         Slot documentation goes here.
         """
-        tplfile,  _ = QFileDialog.getOpenFileName(self, "Dokumentenvorlage öffnen", os.path.expanduser("~"), "Word-Dokumente (*.doc *.docx)");
+        tplfile,  _ = QFileDialog.getOpenFileName(self, "Dokumentenvorlage öffnen", os.path.expanduser("~"), "Word-Dokumente (*.docx)");
         if tplfile:
             self.cfg.setTemplate(str(tplfile))
             self.setTemplatePath(str(tplfile))

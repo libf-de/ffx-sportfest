@@ -7,7 +7,7 @@ Module implementing MainWindow.
 import os,  json, re,  shutil,  collections
 from PyQt5.QtCore import pyqtSlot,  Qt,  QRegExp
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem,  QAbstractItemView,  QFileDialog,  QAbstractScrollArea,  QMessageBox,  QProgressDialog
-from PyQt5.QtGui import QColor,  QDoubleValidator,  QRegExpValidator,  QIcon, QPageLayout, QTextDocument, QTextCursor, QTextTableFormat,  QTextFrameFormat, QFont, QTextBlockFormat
+from PyQt5.QtGui import QColor,  QDoubleValidator,  QRegExpValidator,  QPageLayout, QTextDocument, QTextCursor, QTextTableFormat,  QTextFrameFormat, QFont, QTextBlockFormat
 from PyQt5.QtPrintSupport import QPrintPreviewDialog
 from lib.Delegates import NumDelegate,  ReadonlyDelegate,  TimeDelegate
 from lib.Constants import TableCols,  TableHide,  TableParams,  FFSportfest

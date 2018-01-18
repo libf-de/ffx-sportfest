@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project Sportfest -->
-<!-- Saved: 2018-01-01, 13:11:59 -->
+<!-- Saved: 2018-01-06, 11:29:06 -->
 <!-- Copyright (C) 2018 Fabian Schillig, xorgmc@gmail.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -72,7 +72,7 @@
   <Others/>
   <MainScript>main.py</MainScript>
   <Vcs>
-    <VcsType>None</VcsType>
+    <VcsType>Git</VcsType>
     <VcsOptions>
       <dict>
         <key>

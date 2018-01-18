@@ -5,13 +5,13 @@ Module implementing EvalWindow.
 """
 
 from PyQt5.QtCore import pyqtSlot,  Qt
-from PyQt5.QtGui import QIcon, QColor
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem,  QAbstractItemView,  QDialog
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem,  QAbstractItemView,  QDialog,  QMessageBox, QFileDialog
 from lib.Delegates import NumDelegate,  ReadonlyDelegate,  TimeDelegate
 from lib.Constants import TableCols, ETableCols,  TableHide,  TableParams
 from Configuration import Configuration
 from FTableWidgetItem import FTableWidgetItem
-import re,  datetime
+import re,  datetime,  os, sys, subprocess 
 
 from PyQt5 import QtGui,  QtPrintSupport
 
@@ -459,20 +459,58 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         """
         self.close()
         
+    def getBereich(self):
+        F1 = self.Filter1.lower() #Klasse
+        F2 = self.Filter2.lower() #Geschlecht M W
+        if F1 == "alle" and F2 == "alle":
+            return "Gesamtsieger"
+            
+        if F1 == "alle":
+            if F2 == "m":
+                return "Gesamtsieger Jungen"
+            else:
+                return "Gesamtsieger Mädchen"
+                
+        if F2 == "alle":
+            return "Gesamtsieger Klasse {}".format(self.Fiter1)
+        elif F2 == "m":
+            return "Sieger Jungen Klasse {}".format(self.Filter1)
+        else:
+            return "Sieger Mädchen Klasse {}".format(self.Filter1)
+        
+        
     @pyqtSlot()
     def on_actionUrkunde_triggered(self):
         """
         Slot documentation goes here.
         """
+        path = self.pCfg.getTemplate()
+        if path is None:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Es wurde noch keine Urkundenvorlage eingestellt! Um diese Funktion benutzen zu können müssen Sie zuerst eine Vorlage in den Einstellungen auswählen.")
+            msg.setWindowTitle("FFSportfest - Urkundendruck")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+            return
+        if not os.path.isfile(path):
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Die ausgewählte Urkundenvorlage wurde nicht gefunden - bitte überprüfen Sie ob die Datei verschoben wurde!")
+            msg.setWindowTitle("FFSportfest - Urkundendruck")
+            msg.setDetailedText("Ausgewählte Datei: " + str(path))
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+            return
+        
         self.tableWidget.sortItems(ETableCols.PUNKTE,  Qt.DescendingOrder)
         
         PLACE_NUM = 3
-        BEREICH = "Gesamtsieger/in"
         
-        doc = DocxTemplate("Urkunde.docx")
+        doc = DocxTemplate(path)
         
         now = datetime.datetime.now()
-        context = { 'DATUM' : str(now.strftime("%A") + ", den " + now.strftime("%d.%m.%Y")), "BEREICH": BEREICH } 
+        context = { 'DATUM' : str(now.strftime("%A") + ", den " + now.strftime("%d.%m.%Y")), "BEREICH": self.getBereich() } 
         
         for plz in range(0, PLACE_NUM):
             if not plz <= self.tableWidget.rowCount():
@@ -489,6 +527,26 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
             context['KLASSE_' + str(plz + 1)] = self.tableWidget.item(plz,  ETableCols.KLASSE).text()
         
         doc.render(context)
-        doc.save("gUrkunde.docx")
+        
+        
+        opts = QFileDialog.Options()
+        name, _ = QFileDialog.getSaveFileName(self, "Datenbank speichern unter", os.path.join(self.pCfg.dlgPath(), "Urkunde-{}.docx".format(now.strftime("%d_%m_%Y-%H_%M_%S"))), "Word-Dokumente (*.docx)",  options=opts)
+        if name:
+            filename = str(name)
+            if not filename.endswith(".docx"):
+                filename+= ".docx"
+            doc.save(filename)
+            
+            try:
+                if sys.platform.startswith('darwin'):
+                    subprocess.call(('open', filename))
+                elif os.name == 'nt':
+                    os.startfile(filename)
+                elif os.name == 'posix':
+                    subprocess.call(('xdg-open', filename))
+            except Exception:
+                print("Fehler beim Öffnen der Datei!")
         
         self.resortData()
+        
+        

@@ -327,3 +327,6 @@ class Configuration:
         self.cnf['GENERAL']['ignore_non_participation'] = bool(ign)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
+            
+    def dlgPath(self):
+        return os.path.expanduser("~")
