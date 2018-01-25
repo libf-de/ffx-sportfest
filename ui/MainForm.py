@@ -16,6 +16,7 @@ from lib.CalcNote import CalcNote
 from Configuration import Configuration
 from ui.EvaluateForm import EvalWindow
 from ui.SettingsDialog import SettingsDialog
+from ui.SettingsPortable import SettingsPortableDialog
 from ui.DatabaseForm import DatabaseEditor
 from ui.ExportDialog import ExportDialog
 
@@ -63,10 +64,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.RemoteEdit = value
         if value:
             self.menuDatei.menuAction().setVisible(False)
+            self.actionDatenbank_bearbeiten_2.setEnabled(False)
+            self.actionDatenbank_laden.setEnabled(False)
+            self.actionDatenbank_speichern.setEnabled(False)
+            self.actionDatenbank_speichern_unter.setEnabled(False)
+            self.actionEinstellungen.setEnabled(False)
+            self.actionEinstellungenPortable.setEnabled(True)
+            self.actionSpeichernPortable.setEnabled(True)
             self.menuPortableDatei.menuAction().setVisible(True)
+            self.menuZusammenarbeit.menuAction().setVisible(False)
+            self.actionExport.setEnabled(False)
+            self.actionImport.setEnabled(False)
         else:
             self.menuDatei.menuAction().setVisible(True)
+            self.actionDatenbank_bearbeiten_2.setEnabled(True)
+            self.actionDatenbank_laden.setEnabled(True)
+            self.actionDatenbank_speichern.setEnabled(True)
+            self.actionDatenbank_speichern_unter.setEnabled(True)
+            self.actionEinstellungen.setEnabled(True)
+            self.actionEinstellungenPortable.setEnabled(False)
+            self.actionSpeichernPortable.setEnabled(False)
             self.menuPortableDatei.menuAction().setVisible(False)
+            self.menuZusammenarbeit.menuAction().setVisible(True)
+            self.actionExport.setEnabled(True)
+            self.actionImport.setEnabled(True)
 
     def __init__(self, args=None,  splash=None, parent=None):
         """
@@ -242,11 +263,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.sprungPunkteEdit.setEnabled(True)
         self.wurfPunkteEdit.setEnabled(True)
         self.punkteTotalEdit.setEnabled(True)
-        self.actionDatenbank_speichern.setEnabled(True)
-        self.actionDatenbank_speichern_unter.setEnabled(True)
-        self.openEvaluationButton.setEnabled(True)
-        self.actionExport.setEnabled(True)
+        if not self.RemoteEdit:
+            self.actionDatenbank_speichern.setEnabled(True)
+            self.actionDatenbank_speichern_unter.setEnabled(True)
+            self.actionExport.setEnabled(True)
         self.actionImport.setEnabled(True)
+        self.openEvaluationButton.setEnabled(True)
         
     def blankDetails(self):
         self.sprintSecEdit.setText("")
@@ -663,7 +685,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.loadPD.show()
         self.loadPD.setValue(1)
         self.dbPath = path
-        if self.loadLastDb:
+        if self.loadLastDb and not self.RemoteEdit:
             self.pCfg.setLastDb(str(path))
         try:
             self.loadPD.setValue(2)
@@ -1280,3 +1302,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         prefs = SettingsDialog(self.pCfg, self)
         prefs.exec_()
         self.loadLastDb = self.pCfg.getLoadLastDb()
+    
+    @pyqtSlot()
+    def on_actionEinstellungenPortable_triggered(self):
+        """
+        Öffnet den portablen Einstellungsdialog
+        """
+        pprefs = SettingsPortableDialog(self.pCfg, self)
+        pprefs.exec_()

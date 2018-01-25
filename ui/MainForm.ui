@@ -627,6 +627,8 @@
     </property>
     <addaction name="actionSpeichernPortable"/>
     <addaction name="separator"/>
+    <addaction name="actionEinstellungenPortable"/>
+    <addaction name="separator"/>
     <addaction name="actionBeendenPortable"/>
    </widget>
    <addaction name="menuDatei"/>
@@ -811,6 +813,9 @@
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Speichert die Ergebnisse&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionBeendenPortable">
    <property name="icon">
@@ -823,6 +828,9 @@
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Speichert die Ergebnisse und beendet das Programm&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
   </action>
   <action name="actionEinstellungen">
    <property name="icon">
@@ -831,6 +839,18 @@
    </property>
    <property name="text">
     <string>Einstellungen</string>
+   </property>
+  </action>
+  <action name="actionEinstellungenPortable">
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/menu_icons_16/settings</normaloff>:/menu_icons_16/settings</iconset>
+   </property>
+   <property name="text">
+    <string>Einstellungen</string>
+   </property>
+   <property name="toolTip">
+    <string>Öffnet den Einstellungsdialog</string>
    </property>
   </action>
  </widget>

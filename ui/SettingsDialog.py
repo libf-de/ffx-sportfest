@@ -109,9 +109,9 @@ class SettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot(bool)
     def on_ignoreNonPart_toggled(self, checked):
         """
-        Slot documentation goes here.
+        Nicht-Teilnahme ignorieren geändert
         
-        @param checked DESCRIPTION
+        @param checked Ignorieren ja/nein
         @type bool
         """
         self.cfg.setNonPart(checked)
@@ -119,9 +119,9 @@ class SettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot(bool)
     def on_instantSort_toggled(self, checked):
         """
-        Slot documentation goes here.
+        Sofort sortieren geändert
         
-        @param checked DESCRIPTION
+        @param checked Sofort sortieren ja/nein
         @type bool
         """
         self.cfg.setInstantSort(checked)
@@ -129,9 +129,9 @@ class SettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot(bool)
     def on_wipeResults_toggled(self, checked):
         """
-        Slot documentation goes here.
+        Ergebnisse löschen geändert
         
-        @param checked DESCRIPTION
+        @param checked Löschen ja/nein
         @type bool
         """
         self.cfg.setWipeResults(checked)
@@ -139,9 +139,9 @@ class SettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot(bool)
     def on_guessGender_toggled(self, checked):
         """
-        Slot documentation goes here.
+        Geschlecht raten geändert
         
-        @param checked DESCRIPTION
+        @param checked Raten ja/nein
         @type bool
         """
         self.cfg.setGuessGender(checked)
@@ -149,10 +149,9 @@ class SettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot(int)
     def on_placeCount_valueChanged(self, p0):
         """
-        Slot documentation goes here.
+        Anzahl der Plätze für Urkundendruck geändert
         
-        @param p0 DESCRIPTION
+        @param p0 Anzahl
         @type int
         """
         self.cfg.setPlaceCount(self.placeCount.value())
-        print("changed {}".format(str(self.placeCount.value())))

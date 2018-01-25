@@ -378,6 +378,9 @@ class Ui_MainWindow(object):
         icon11.addPixmap(QtGui.QPixmap(":/menu_icons_16/settings"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionEinstellungen.setIcon(icon11)
         self.actionEinstellungen.setObjectName("actionEinstellungen")
+        self.actionEinstellungenPortable = QtWidgets.QAction(MainWindow)
+        self.actionEinstellungenPortable.setIcon(icon11)
+        self.actionEinstellungenPortable.setObjectName("actionEinstellungenPortable")
         self.menuDatei.addAction(self.actionDatenbank_bearbeiten_2)
         self.menuDatei.addSeparator()
         self.menuDatei.addAction(self.actionDatenbank_laden)
@@ -394,6 +397,8 @@ class Ui_MainWindow(object):
         self.menuZusammenarbeit.addAction(self.actionExport)
         self.menuZusammenarbeit.addAction(self.actionImport)
         self.menuPortableDatei.addAction(self.actionSpeichernPortable)
+        self.menuPortableDatei.addSeparator()
+        self.menuPortableDatei.addAction(self.actionEinstellungenPortable)
         self.menuPortableDatei.addSeparator()
         self.menuPortableDatei.addAction(self.actionBeendenPortable)
         self.menuBar.addAction(self.menuDatei.menuAction())
@@ -492,9 +497,13 @@ class Ui_MainWindow(object):
         self.actionImport.setShortcut(_translate("MainWindow", "Ctrl+Shift+I"))
         self.actionSpeichernPortable.setText(_translate("MainWindow", "Speichern"))
         self.actionSpeichernPortable.setToolTip(_translate("MainWindow", "<html><head/><body><p>Speichert die Ergebnisse</p></body></html>"))
+        self.actionSpeichernPortable.setShortcut(_translate("MainWindow", "Ctrl+S"))
         self.actionBeendenPortable.setText(_translate("MainWindow", "Beenden"))
         self.actionBeendenPortable.setToolTip(_translate("MainWindow", "<html><head/><body><p>Speichert die Ergebnisse und beendet das Programm</p></body></html>"))
+        self.actionBeendenPortable.setShortcut(_translate("MainWindow", "Ctrl+Q"))
         self.actionEinstellungen.setText(_translate("MainWindow", "Einstellungen"))
+        self.actionEinstellungenPortable.setText(_translate("MainWindow", "Einstellungen"))
+        self.actionEinstellungenPortable.setToolTip(_translate("MainWindow", "Öffnet den Einstellungsdialog"))
 
 from FTableWidget import FTableWidget
 import oxyicons_rc
