@@ -92,7 +92,24 @@ class Configuration:
         @type load: boolean
         """
         #self.cnf['GENERAL']['guess_gender'] = bool(enable)
-        self.cnf['GENERAL']['guess_gender'] = str(enable)
+        self.cnf['EDITOR']['guess_gender'] = str(enable)
+        with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
+            self.cnf.write(configfile)
+            
+    def getPlaceCount(self):
+        """
+        Gibt zurück ob das Geschlecht geraten werden soll
+        @return Geschlecht raten
+        """
+        return self.cnf.getint('GENERAL',  'place_count',  fallback=3)    
+        
+    def setPlaceCount(self,  count):
+        """
+        Setzt die Anzahl der Plaetze fuer den Urkundendruck
+        @param count: Anzahl
+        @type count: int
+        """
+        self.cnf['GENERAL']['place_count'] = str(int(count))
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
             

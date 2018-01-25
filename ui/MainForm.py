@@ -223,6 +223,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget.blockSignals(False)
         self.blankDetails()
         self.disableUserInput()
+        self.dbPath = None
         
     def enableUserInput(self):
         self.tableWidget.setEnabled(True)
@@ -269,14 +270,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
     def closeEvent(self,  event):
         if self.dataChanged:
-            reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern und dann das Programm beenden?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
-            if reply == QMessageBox.Save:
-                self.on_actionDatenbank_speichern_triggered()
-                event.accept()
-            elif reply == QMessageBox.Discard:
-                event.accept()
+            if self.RemoteEdit:
+                reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert und nicht gespeichert! Möchten Sie das Programm wirklich beenden?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                if reply == QMessageBox.Yes:
+                    event.accept()
+                else:
+                    event.ignore()
             else:
-                event.ignore()
+                reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern und dann das Programm beenden?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
+                if reply == QMessageBox.Save:
+                    self.on_actionDatenbank_speichern_triggered()
+                    event.accept()
+                elif reply == QMessageBox.Discard:
+                    event.accept()
+                else:
+                    event.ignore()
     
     @pyqtSlot(QTableWidgetItem, QTableWidgetItem)
     def on_tableWidget_currentItemChanged(self, current, previous):
@@ -645,9 +653,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.loadDb(db_file)
             
     def loadDb(self,  path):
-        print("Loading x{}x".format(str(path)))
-        #if not path:
-        #    return False
         if not os.path.isfile(path):
             return False
         self.loadPD = QProgressDialog()
@@ -657,15 +662,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.loadPD.setRange(0,  5)
         self.loadPD.show()
         self.loadPD.setValue(1)
-        print("still loading")
         self.dbPath = path
         if self.loadLastDb:
             self.pCfg.setLastDb(str(path))
-        #self.pCfg.setLastDb(str(path))
         try:
             self.loadPD.setValue(2)
             self.JSD = json.load(codecs.open(str(path), 'r', 'utf-8-sig'))
-            #self.JSD = json.load(open(str(path)))
+            self.setWindowTitle("{} - FFSportfest".format(str(os.path.basename(path))))
             self.loadPD.setValue(3)
             self.fillTable("Alle",  "Alle",  True)
             self.loadPD.setValue(4)
@@ -1172,6 +1175,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 return
         if self.dbPath:
+            if not self.dbf is None:
+                self.dbf.mOpen(self.dbPath)
             self.closeDatabase()
         if not self.dbf is None:
             if not self.dbf.isVisible():
@@ -1189,16 +1194,60 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Datenbank speichern (portabler Modus)
         """
-        # TODO: not implemented yet
-        raise NotImplementedError
+        if self.dbPath:
+            try:
+                with open(self.dbPath, 'w') as f:
+                    json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
+                    self.dataChanged = False
+            except PermissionError as per:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("Die Datenbank konnte nicht gespeichert werden, da Sie keine Schreibrechte für diese Datei besitzen! Bitte speichern Sie die Datei im folgenden Dialog an einem anderen Ort ab.")
+                msg.setWindowTitle("FFSportfest - Fehler beim Speichern")
+                msg.setDetailedText("Dateipfad: " + str(self.dbPath) + "\n" + str(per))
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+                self.portableSaveAs()
+        else:
+            self.portableSaveAs()
+            
+    def portableSaveAs(self):
+        opts = QFileDialog.Options()
+        if not self.cfg.getNativeDialogs():
+            opts |= QFileDialog.DontUseNativeDialog
+        name, _ = QFileDialog.getSaveFileName(self, "Datenbank speichern unter", os.path.expanduser("~"), "FMD-Datenbank (*.fmd)",  options=opts)
+        if name:
+            filename = str(name)
+            if not filename.endswith(".fmd"):
+                filename+= ".fmd"
+            
+            try:
+                with open(filename, 'w') as f:
+                    json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
+                    self.dataChanged = False
+            except PermissionError as per:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Critical)
+                msg.setText("Die Datenbank konnte nicht gespeichert werden, da Sie keine Schreibrechte für diesen Ort besitzen.")
+                msg.setWindowTitle("FFSportfest - Fehler beim Speichern")
+                msg.setDetailedText("Dateipfad: " + str(filename) + "\n" + str(per))
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+                return;
+            
+            self.dataChanged = False
     
     @pyqtSlot()
     def on_actionBeendenPortable_triggered(self):
         """
         Beenden (portabler Modus)
         """
-        # TODO: not implemented yet
-        raise NotImplementedError
+        if self.dataChanged:
+            reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert und nicht gespeichert! Möchten Sie das Programm wirklich beenden?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.No:
+                return
+        self.close()
+                
     
     @pyqtSlot()
     def on_actionExport_triggered(self):

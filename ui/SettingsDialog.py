@@ -14,7 +14,7 @@ from .Ui_SettingsDialog import Ui_Dialog
 
 class SettingsDialog(QDialog, Ui_Dialog):
     """
-    Class documentation goes here.
+    TODO: Reload config
     """
     
     cfg = None
@@ -40,6 +40,7 @@ class SettingsDialog(QDialog, Ui_Dialog):
         self.instantSort.blockSignals(True)
         self.wipeResults.blockSignals(True)
         self.guessGender.blockSignals(True)
+        self.placeCount.blockSignals(True)
         self.loadLastDb.setChecked(self.cfg.getLoadLastDb())
         self.crashSave.setChecked(self.cfg.getRecovery())
         self.backupDb.setChecked(self.cfg.getBackupFile())
@@ -47,6 +48,7 @@ class SettingsDialog(QDialog, Ui_Dialog):
         self.instantSort.setChecked(self.cfg.getInstantSort())
         self.wipeResults.setChecked(self.cfg.getWipeResults())
         self.guessGender.setChecked(self.cfg.getGuessGender())
+        self.placeCount.setValue(self.cfg.getPlaceCount())
         self.loadLastDb.blockSignals(False)
         self.crashSave.blockSignals(False)
         self.backupDb.blockSignals(False)
@@ -54,6 +56,7 @@ class SettingsDialog(QDialog, Ui_Dialog):
         self.instantSort.blockSignals(False)
         self.wipeResults.blockSignals(False)
         self.guessGender.blockSignals(False)
+        self.placeCount.blockSignals(False)
         
     def setTemplatePath(self, path):
         if path is None:
@@ -142,3 +145,14 @@ class SettingsDialog(QDialog, Ui_Dialog):
         @type bool
         """
         self.cfg.setGuessGender(checked)
+    
+    @pyqtSlot(int)
+    def on_placeCount_valueChanged(self, p0):
+        """
+        Slot documentation goes here.
+        
+        @param p0 DESCRIPTION
+        @type int
+        """
+        self.cfg.setPlaceCount(self.placeCount.value())
+        print("changed {}".format(str(self.placeCount.value())))

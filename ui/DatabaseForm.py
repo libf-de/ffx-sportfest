@@ -24,6 +24,10 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
     doubleEnter = False
     enterBox = None
     
+    mDbPath = None
+    
+    parent = None
+    
     hasChanged = False
     fileName = None
     
@@ -41,6 +45,8 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
     """
     Datenbankeditor
     Erstellt und bearbeitet Schülerdatenbanken
+    
+    TODO: Nach Schließen Datenbank wieder öffnen
     """
     def __init__(self, config, parent=None, opened=None):
         """
@@ -51,6 +57,8 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         
         self.cfg = config
         
+        self.parent = parent
+        
         self.nu = NameUtil()
         
         self.initTable()
@@ -58,13 +66,25 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         if not opened is None:
             self.fileName = str(opened)
             self.setWindowTitle("{} - Datenbankeditor - FFSportfest".format(str(os.path.basename(opened))))
+            self.mDbPath = opened
             self.loadDb(opened)
+    
+    def mOpen(self, path):
+        self.fileName = str(path)
+        self.setWindowTitle("{} - Datenbankeditor - FFSportfest".format(str(os.path.basename(path))))
+        self.mDbPath = path
+        self.loadDb(path)
+    
+    def considerFeedback(self):
+        if self.parent.dbPath is None:
+            self.parent.loadDb(self.mDbPath)
         
     def closeEvent(self,  event):
         """
         Wird aufgerufen wenn das Fenster geschlossen wird
         Wenn ungespeicherte Änderungen vorliegen wird Meldung angezeigt
         """
+        self.considerFeedback()
         if self.hasChanged:
             reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
             if reply == QMessageBox.Save:

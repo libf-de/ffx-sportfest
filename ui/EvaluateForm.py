@@ -505,14 +505,14 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         
         self.tableWidget.sortItems(ETableCols.PUNKTE,  Qt.DescendingOrder)
         
-        PLACE_NUM = 3
+        #PLACE_NUM = 3
         
         doc = DocxTemplate(path)
         
         now = datetime.datetime.now()
         context = { 'DATUM' : str(now.strftime("%A") + ", den " + now.strftime("%d.%m.%Y")), "BEREICH": self.getBereich() } 
         
-        for plz in range(0, PLACE_NUM):
+        for plz in range(0, self.pCfg.getPlaceCount()):
             if not plz <= self.tableWidget.rowCount():
                 print("Kein Schüler auf Platz {}".format(str(plz + 1)))
                 continue
