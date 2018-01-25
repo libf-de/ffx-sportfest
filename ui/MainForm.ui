@@ -601,6 +601,8 @@
     <addaction name="actionDatenbank_speichern"/>
     <addaction name="actionDatenbank_speichern_unter"/>
     <addaction name="separator"/>
+    <addaction name="actionEinstellungen"/>
+    <addaction name="separator"/>
     <addaction name="actionBeenden"/>
    </widget>
    <widget class="QMenu" name="menu_ber">
@@ -627,17 +629,10 @@
     <addaction name="separator"/>
     <addaction name="actionBeendenPortable"/>
    </widget>
-   <widget class="QMenu" name="menuEinstellungen">
-    <property name="title">
-     <string>Einstellungen</string>
-    </property>
-    <addaction name="actionEinstellungen"/>
-   </widget>
    <addaction name="menuDatei"/>
    <addaction name="menuPortableDatei"/>
    <addaction name="menuZusammenarbeit"/>
    <addaction name="menu_ber"/>
-   <addaction name="menuEinstellungen"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionBeenden">
@@ -750,6 +745,9 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Werkzeug um Datenbanken zu bearbeiten oder zu erstellen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionHilfe">

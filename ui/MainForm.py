@@ -30,14 +30,14 @@ import codecs
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """
-    Class documentation goes here.
+    TODO: Format der Klasse beim öffnen überprüfen
     """
     
     JSD = {};
     prevRow = -1;
     pCalc = None
     nCalc = None
-    dbPath = ""
+    dbPath = None
     pCfg = None
     loadLastDb = False
     doRec = False
@@ -45,6 +45,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     ignNonPart = True
     healthyRows = 0
     EvalW = None
+    dbf = None
     RemoteEdit = False
     
     alleKlassen = []
@@ -86,6 +87,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.doRec = self.pCfg.getRecovery()
         
         self.EvalW = EvalWindow(self)
+        self.dbf = DatabaseEditor(self.pCfg, self, self.dbPath)
         
         self.disableUserInput()
         
@@ -145,10 +147,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         tW.setItemDelegateForColumn(TableCols.WURF_N,  ReadonlyDelegate(self))
         tW.setItemDelegateForColumn(TableCols.PUNKTE,  ReadonlyDelegate(self))
         tW.setItemDelegateForColumn(TableCols.NOTE,  ReadonlyDelegate(self))
+        tW.setItemDelegateForColumn(TableCols.KRANK,  ReadonlyDelegate(self))
         
         tW.setHorizontalHeaderLabels( TableParams.HEADER_LBL )
         
-        tW.setIgnoredKeys([Qt.Key_Return,  Qt.Key_Enter,  Qt.Key_Tab,  Qt.Key_Backspace])
+        tW.setIgnoredKeys([Qt.Key_Return,  Qt.Key_Enter,  Qt.Key_Tab,  Qt.Key_Backspace,  Qt.Key_Space])
         
         tW.blockSignals(False)
         
@@ -182,6 +185,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.loadDb(packDb)
             else:
                 if self.loadLastDb:
+                    print("Loading last db...")
                     self.loadDb(self.pCfg.getLastDb())
         
         if not splash is None:
@@ -457,6 +461,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.EvalW is not None:
             print("ST isnt none")
             self.EvalW.refreshData(self.JSD)
+            
+    """
+    Gibt zurück ob der Schüler krank ist (Checkbox-Ersatz)
+    @param text Text
+    """
+    def istKrank(self, text):
+        if text.startswith("☒"):
+            return True
+        else:
+            return False
+            
+    """
+    Gibt den Checkbox-Ersatz zurück
+    @param bval Krank oder nicht
+    """
+    def getKrank(self, bval):
+        if bval:
+            return "☒ Krank"
+        else:
+            return "☑ Anwesend"
+            
     
     @pyqtSlot(str)
     def on_klasseCombo_currentIndexChanged(self, p0):
@@ -477,7 +502,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.tableWidget.item(crow+1,  TableCols.KRANK) is None:
             print('NEXT ROW NONEXISTENT!')
             return
-        if self.tableWidget.item(crow+1,  TableCols.KRANK).checkState() == Qt.Checked:
+        #if self.tableWidget.item(crow+1,  TableCols.KRANK).checkState() == Qt.Checked:
+        if self.istKrank(self.tableWidget.item(crow+1,  TableCols.KRANK).text()):
             self.gotoNextHealthyCell(crow+1,  ccol)
         else:
             self.tableWidget.setCurrentCell(crow+1, ccol)
@@ -505,11 +531,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif key == Qt.Key_Space:
             if ccol == TableCols.KRANK:
                 itm = tw.item(crow, ccol)
-                krank = not self.boolChecked(itm.checkState())
+                #krank = not self.boolChecked(itm.checkState())
+                krank = not self.istKrank(itm.text())
                 if krank:
                     self.healthyRows -= 1
                 else:
                     self.healthyRows += 1
+                itm.setText(self.getKrank(krank))
                 self.toggleRow(crow,  krank)
                 self.JSD[self.tableWidget.item(crow, TableCols.KLASSE).text()][self.tableWidget.item(crow, TableCols.UID).text()]['krank'] = krank
                 self.syncToEval()
@@ -617,6 +645,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.loadDb(db_file)
             
     def loadDb(self,  path):
+        print("Loading x{}x".format(str(path)))
+        #if not path:
+        #    return False
+        if not os.path.isfile(path):
+            return False
         self.loadPD = QProgressDialog()
         self.loadPD.setWindowTitle("Lade Datenbank...")
         self.loadPD.setLabelText("Lade Datenbank, bitte warten!")
@@ -624,11 +657,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.loadPD.setRange(0,  5)
         self.loadPD.show()
         self.loadPD.setValue(1)
-        if not os.path.isfile(path):
-            return False
+        print("still loading")
         self.dbPath = path
         if self.loadLastDb:
             self.pCfg.setLastDb(str(path))
+        #self.pCfg.setLastDb(str(path))
         try:
             self.loadPD.setValue(2)
             self.JSD = json.load(codecs.open(str(path), 'r', 'utf-8-sig'))
@@ -682,6 +715,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not ks in self.alleKlassen:
             self.alleKlassen.insert(len(self.alleKlassen),  ks)
         
+    def validKlasse(self, input):
+        try:
+            float(input)
+        except Exception:
+            return False
+        return True
         
     def getKlassenstufe(self,  input):
         return re.findall("^[^\d]*(\d+)",  input)[0]
@@ -709,11 +748,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(self.tableWidget.columnCount()):
                 try:
                     itm = self.tableWidget.item(row, i)
-                    if not i == TableCols.KRANK:
-                        if disabled:
-                            itm.setFlags(itm.flags() ^ Qt.ItemIsEnabled)
-                        else:
-                            itm.setFlags(itm.flags() | Qt.ItemIsEnabled)
+                    #if not i == TableCols.KRANK:
+                    if disabled:
+                        itm.setFlags(itm.flags() ^ Qt.ItemIsEnabled)
+                    else:
+                        itm.setFlags(itm.flags() | Qt.ItemIsEnabled)
                         
                     
                 except Exception:
@@ -801,6 +840,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tableWidget.setRowCount(0)
         sc = 0
         for klasse,  schueler in self.JSD.items():
+            if not self.validKlasse(klasse):
+                print("Ignoriere ungueltige Klasse {}".format(klasse))
+                return
             if dbLoad:
                 self.addKlasse(klasse)
             if self.doFilter(filterKlasse,  klasse):
@@ -834,10 +876,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.tableWidget.setItem(sc,TableCols.PUNKTE, QTableWidgetItem(str(det['punkte'])))
                     if 'note' in det:
                         self.tableWidget.setItem(sc,TableCols.NOTE, QTableWidgetItem(str(det['note'])))
-                    krankbox = QTableWidgetItem("Krank")
-                    krankbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-                    krankbox.setCheckState(self.checkedBool(iskrank))
-                    self.tableWidget.setItem(sc, TableCols.KRANK,  krankbox)
+                    self.tableWidget.setItem(sc,TableCols.KRANK, QTableWidgetItem(str(self.getKrank(iskrank))))
+                    #krankbox = QTableWidgetItem("Krank")
+                    #krankbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+                    #krankbox.setCheckState(self.checkedBool(iskrank))
+                    #self.tableWidget.setItem(sc, TableCols.KRANK,  krankbox)
                     
                     self.toggleRow(sc,  iskrank)
                     
@@ -903,12 +946,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Wird aufgerufen wenn Item in Tabelle angeklickt wurde (für Krank-Toggle)
         """
         if item.column() == TableCols.KRANK:
-            if self.boolChecked(item.checkState()):
+            krank = not self.istKrank(item.text())
+            #if self.boolChecked(item.checkState()):
+            if krank:
                 self.healthyRows -= 1
             else:
                 self.healthyRows += 1
-            self.toggleRow(item.row(),  self.boolChecked(item.checkState()))
-            self.JSD[self.tableWidget.item(item.row(), TableCols.KLASSE).text()][self.tableWidget.item(item.row(), TableCols.UID).text()]['krank'] = self.boolChecked(item.checkState())
+            item.setText(self.getKrank(krank))
+            self.toggleRow(item.row(),  krank)
+            self.JSD[self.tableWidget.item(item.row(), TableCols.KLASSE).text()][self.tableWidget.item(item.row(), TableCols.UID).text()]['krank'] = krank
             self.syncToEval()
     
     @pyqtSlot()
@@ -997,7 +1043,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def isRowKrank(self,  row):
         if self.tableWidget.item(row,  TableCols.KRANK) is None:
             return False
-        return self.tableWidget.item(row,  TableCols.KRANK).checkState() == Qt.Checked
+        #return self.tableWidget.item(row,  TableCols.KRANK).checkState() == Qt.Checked
+        return self.isKrank(self.tableWidget.item(row,  TableCols.KRANK).text())
         
     def getPrintHeader(self):
         #sK = str(self.klasseCombo.currentText) TODO
@@ -1104,15 +1151,38 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 
         if self.EvalW is not None:
             print("evalw is not none")
-            self.EvalW.show()
+            if not self.EvalW.isVisible():
+                self.EvalW.show()
+            else:
+                # this will remove minimized status 
+                # and restore window with keeping maximized/normal state
+                self.EvalW.setWindowState(self.EvalW.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
+                # this will activate the window
+                self.EvalW.activateWindow()
     
     @pyqtSlot()
     def on_actionDatenbank_bearbeiten_2_triggered(self):
         """
         Öffnet den Datenbankeditor
         """
-        dbf = DatabaseEditor(self.pCfg, self)
-        dbf.show()
+        if self.dataChanged:
+            reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
+            if reply == QMessageBox.Save:
+                self.on_actionDatenbank_speichern_triggered()
+            else:
+                return
+        if self.dbPath:
+            self.closeDatabase()
+        if not self.dbf is None:
+            if not self.dbf.isVisible():
+                self.dbf.show()
+            else:
+                # this will remove minimized status 
+                # and restore window with keeping maximized/normal state
+                self.dbf.setWindowState(self.dbf.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
+
+                # this will activate the window
+                self.dbf.activateWindow()
     
     @pyqtSlot()
     def on_actionSpeichernPortable_triggered(self):
@@ -1160,3 +1230,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         prefs = SettingsDialog(self.pCfg, self)
         prefs.exec_()
+        self.loadLastDb = self.pCfg.getLoadLastDb()

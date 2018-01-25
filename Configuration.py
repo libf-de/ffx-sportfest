@@ -32,6 +32,8 @@ class Configuration:
             return
         self.ExecPath = os.path.dirname(str(__file__))
         return
+        
+
     
     def getExecutablePath(self):
         """
@@ -89,7 +91,8 @@ class Configuration:
         @param enable: Geschlecht raten
         @type load: boolean
         """
-        self.cnf['GENERAL']['guess_gender'] = bool(enable)
+        #self.cnf['GENERAL']['guess_gender'] = bool(enable)
+        self.cnf['GENERAL']['guess_gender'] = str(enable)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
             
@@ -164,7 +167,7 @@ class Configuration:
         @param enable: Sofort sortieren
         @type load: boolean
         """
-        self.cnf['EDITOR']['sort_instantly'] = bool(enable)
+        self.cnf['EDITOR']['sort_instantly'] = str(enable)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
             
@@ -227,7 +230,7 @@ class Configuration:
         @param enable: Ergebnisse löschen
         @type load: boolean
         """
-        self.cnf['EDITOR']['reset_results'] = bool(enable)
+        self.cnf['EDITOR']['reset_results'] = str(enable)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
         
@@ -268,7 +271,7 @@ class Configuration:
         @param enable: Dateien vor Öffnen sichern
         @type load: boolean
         """
-        self.cnf['GENERAL']['create_backup_file'] = bool(enable)
+        self.cnf['GENERAL']['create_backup_file'] = str(enable)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
         
@@ -294,7 +297,7 @@ class Configuration:
         @param load: Erstelle Wiederherstellungsdateien
         @type load: boolean
         """
-        self.cnf['GENERAL']['enable_file_recovery'] = bool(enable)
+        self.cnf['GENERAL']['enable_file_recovery'] = str(enable)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
         
@@ -304,7 +307,7 @@ class Configuration:
         @param load: Zuletzt geöffnete Datenbank beim Start laden
         @type load: boolean
         """
-        self.cnf['GENERAL']['load_last_db'] = bool(load)
+        self.cnf['GENERAL']['load_last_db'] = str(load)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
             
@@ -324,7 +327,7 @@ class Configuration:
         @param ign: Ignorieren Ja/Nein
         @type ign: boolean
         """
-        self.cnf['GENERAL']['ignore_non_participation'] = bool(ign)
+        self.cnf['GENERAL']['ignore_non_participation'] = str(ign)
         with open(self.cfgFilePath, 'w', encoding='utf-8') as configfile:
             self.cnf.write(configfile)
             

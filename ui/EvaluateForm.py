@@ -548,5 +548,3 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
                 print("Fehler beim Öffnen der Datei!")
         
         self.resortData()
-        
-        

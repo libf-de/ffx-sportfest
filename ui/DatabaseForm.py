@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMainWindow,  QFileDialog,  QProgressDialog,  QMessa
 from PyQt5.QtGui import QColor
 import os,  json,  shutil,  uuid,  codecs
 from lib.Constants import TableCols, TableParams
-from lib.Delegates import GeschlechtDelegate,  KlasseDelegate
+from lib.Delegates import GeschlechtDelegate,  KlasseDelegate,  ReadonlyDelegate
 from lib.NameUtil import NameUtil
 from ui.ExcelDialog import ExcelImporter
 
@@ -42,7 +42,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
     Datenbankeditor
     Erstellt und bearbeitet Schülerdatenbanken
     """
-    def __init__(self, config, parent=None):
+    def __init__(self, config, parent=None, opened=None):
         """
         Konstruktor
         """
@@ -54,6 +54,11 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         self.nu = NameUtil()
         
         self.initTable()
+        
+        if not opened is None:
+            self.fileName = str(opened)
+            self.setWindowTitle("{} - Datenbankeditor - FFSportfest".format(str(os.path.basename(opened))))
+            self.loadDb(opened)
         
     def closeEvent(self,  event):
         """
@@ -106,6 +111,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         
         tW.setItemDelegateForColumn(TableCols.GESCHLECHT, GeschlechtDelegate(self))
         tW.setItemDelegateForColumn(TableCols.KLASSE,  KlasseDelegate(self))
+        tW.setItemDelegateForColumn(TableCols.KRANK,  ReadonlyDelegate(self))
         tW.setHorizontalHeaderLabels( TableParams.HEADER_LBL )
         tW.setIgnoredKeys([Qt.Key_Return,  Qt.Key_Enter,  Qt.Key_Tab,  Qt.Key_Backspace])
         tW.blockSignals(False)
@@ -297,10 +303,11 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         self.tableWidget.setItem(sc,TableCols.WURF_N, QTableWidgetItem("6"))
         self.tableWidget.setItem(sc,TableCols.PUNKTE, QTableWidgetItem("0"))
         self.tableWidget.setItem(sc,TableCols.NOTE, QTableWidgetItem("6"))
-        krankbox = QTableWidgetItem("Krank")
-        krankbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-        krankbox.setCheckState(self.checkedBool(False))
-        self.tableWidget.setItem(sc, TableCols.KRANK,  krankbox)
+        #krankbox = QTableWidgetItem("Krank")
+        #krankbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+        #krankbox.setCheckState(self.checkedBool(False))
+        #self.tableWidget.setItem(sc, TableCols.KRANK,  krankbox)
+        self.tableWidget.setItem(sc,TableCols.KRANK, QTableWidgetItem(str(self.getKrank(False)))) #TODO: getKrank
         self.T1V = False
         self.T2V = False
         self.T3V = False
@@ -315,6 +322,26 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         self.tableWidget.setCurrentCell(sc, TableCols.NAME)
         self.tableWidget.blockSignals(False)
         self.setChanged(True)
+        
+    def istKrank(self, text):
+        """
+        Gibt zurück ob der Schüler krank ist (Checkbox-Ersatz)
+        @param text Text
+        """
+        if text.startswith("☒"):
+            return True
+        else:
+            return False
+            
+    def getKrank(self, bval):
+        """
+        Gibt den Checkbox-Ersatz zurück
+        @param bval Krank oder nicht
+        """
+        if bval:
+            return "☒ Krank"
+        else:
+            return "☑ Anwesend"
         
     def nextRow(self,  crow,  ccol):
         """
@@ -336,7 +363,8 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                 timer.timeout.connect(self.resetDoubleEnter)
                 timer.start(2000)
         else:
-            if self.tableWidget.item(crow+1,  TableCols.KRANK).checkState() == Qt.Checked:
+            #if self.tableWidget.item(crow+1,  TableCols.KRANK).checkState() == Qt.Checked:
+            if self.istKrank(self.tableWidget.item(crow+1,  TableCols.KRANK).text()):
                 self.gotoNextHealthyCell(crow+1,  ccol)
             else:
                 self.tableWidget.setCurrentCell(crow+1, ccol)
@@ -660,10 +688,11 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                 self.tableWidget.setItem(sc,TableCols.PUNKTE, QTableWidgetItem(str(det['punkte'])))
                 if 'note' in det:
                     self.tableWidget.setItem(sc,TableCols.NOTE, QTableWidgetItem(str(det['note'])))
-                krankbox = QTableWidgetItem("Krank")
-                krankbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
-                krankbox.setCheckState(self.checkedBool(iskrank))
-                self.tableWidget.setItem(sc, TableCols.KRANK,  krankbox)
+                #krankbox = QTableWidgetItem("Krank")
+                #krankbox.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
+                #krankbox.setCheckState(self.checkedBool(iskrank))
+                #self.tableWidget.setItem(sc, TableCols.KRANK,  krankbox)
+                self.tableWidget.setItem(sc,TableCols.KRANK, QTableWidgetItem(str(self.getKrank(iskrank))))
                 sc += 1
         #self.tableWidget.setSortingEnabled(True)
         self.actionSort.setEnabled(True)
@@ -752,8 +781,12 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         """
         self.setChanged(True)
         UID = self.tableWidget.item(item.row(),  TableCols.UID).text()
+        print("EDITOR: ITEMCHANGED")
         if item.column() == TableCols.KLASSE:
+            print("EDITOR: ITEMCHANGED: KLASSE")
+            print("EDITOR: KZ: {} IR: {}".format(str(self.klasseZeile), str(item.row())))
             if self.klasseZeile == item.row():
+                print("EDITOR: ITEMCHANGED: ZEILE")
                 if self.klasseText == "":
                     self.klasseText = "working"
                     
@@ -789,7 +822,8 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                 self.T3V = True
                 print("V3 GOOD")
         elif item.column() == TableCols.KRANK:
-            self.JSN[self.getCurrentRowKlasse(item.row())][UID]['krank'] = self.boolChecked(item.checkState())
+            #self.JSN[self.getCurrentRowKlasse(item.row())][UID]['krank'] = self.boolChecked(item.checkState())
+            self.JSN[self.getCurrentRowKlasse(item.row())][UID]['krank'] = self.istKrank(item.text())
             
         if item.row() == self.TVR:
             if self.T1V and self.T2V and self.T3V and self.T4V:
@@ -808,6 +842,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         print("changed")
         if not self.cfg is None:
             if self.cfg.getInstantSort() and self.tableWidget.isSortingEnabled():
+                print("SORITNG!!!")
                 self.cfg.doSortBy(self.tableWidget)
     
     @pyqtSlot(QTableWidgetItem, QTableWidgetItem)
@@ -820,8 +855,8 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         @param previous vorherige Zelle
         @type QTableWidgetItem
         """
-        # TODO: Wertzuweisung wenn nichts ausgewählt
-        if len(self.tableWidget.selectedIndexes()) == 0:
+        # TODO: Wertzuweisung wenn nichts ausgewählt #← But why wenn dieses Event auftritt sollte immer etwas ausgewählt sein???
+        if not len(self.tableWidget.selectedIndexes()) == 0: #← Was hab ich da getan?
             if current.column() == TableCols.KLASSE:
                 print("Klasse gemerkt")
                 self.klasseZeile = current.row()
@@ -833,3 +868,15 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         Erzwingt eine Neusortierung der Schüler
         """
         self.cfg.doSortBy(self.tableWidget)
+    
+    @pyqtSlot(QTableWidgetItem)
+    def on_tableWidget_itemClicked(self, item):
+        """
+        Wird aufgerufen wenn Item in Tabelle angeklickt wurde (für Krank-Toggle)
+        """
+        if item.column() == TableCols.KRANK:
+            krank = not self.istKrank(item.text())
+            #if self.boolChecked(item.checkState()):
+            item.setText(self.getKrank(krank))
+            #self.JSD[self.tableWidget.item(item.row(), TableCols.KLASSE).text()][self.tableWidget.item(item.row(), TableCols.UID).text()]['krank'] = krank
+            self.JSN[self.getCurrentRowKlasse(item.row())][self.tableWidget.item(item.row(), TableCols.UID).text()]['krank'] = self.istKrank(item.text())
