@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project Sportfest -->
-<!-- Saved: 2018-01-18, 12:43:09 -->
+<!-- Saved: 2018-01-28, 22:16:38 -->
 <!-- Copyright (C) 2018 Fabian Schillig, xorgmc@gmail.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -35,7 +35,6 @@
     <Source>ui/GeschlechtInputDialog.py</Source>
     <Source>ui/KlasseInputDialog.py</Source>
     <Source>ui/MainForm.py</Source>
-    <Source>ui/Settings.py</Source>
     <Source>ui/SettingsDialog.py</Source>
     <Source>ui/TimerMessageBox.py</Source>
     <Source>ui/Ui_CustomSortDialog.py</Source>
@@ -60,7 +59,6 @@
     <Form>ui/GeschlechtInputDialog.ui</Form>
     <Form>ui/KlasseInputDialog.ui</Form>
     <Form>ui/MainForm.ui</Form>
-    <Form>ui/Settings.ui</Form>
     <Form>ui/SettingsDialog.ui</Form>
   </Forms>
   <Translations/>

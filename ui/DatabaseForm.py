@@ -84,7 +84,6 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         Wird aufgerufen wenn das Fenster geschlossen wird
         Wenn ungespeicherte Änderungen vorliegen wird Meldung angezeigt
         """
-        self.considerFeedback()
         if self.hasChanged:
             reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
             if reply == QMessageBox.Save:
@@ -92,11 +91,15 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                 if self.hasChanged:
                     event.ignore()
                 else:
+                    self.considerFeedback()
                     event.accept()
             elif reply == QMessageBox.Discard:
+                self.considerFeedback()
                 event.accept()
             else:
                 event.ignore()
+        else:
+            self.considerFeedback()
         
     def initTable(self):
         """

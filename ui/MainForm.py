@@ -4,9 +4,9 @@
 Module implementing MainWindow.
 """
 
-import os,  json, re,  shutil,  collections
+import os,  json, re,  shutil
 from PyQt5.QtCore import pyqtSlot,  Qt,  QRegExp
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem,  QAbstractItemView,  QFileDialog,  QAbstractScrollArea,  QMessageBox,  QProgressDialog
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QAbstractItemView, QFileDialog, QMessageBox, QProgressDialog, QHeaderView, QAction
 from PyQt5.QtGui import QColor,  QDoubleValidator,  QRegExpValidator,  QPageLayout, QTextDocument, QTextCursor, QTextTableFormat,  QTextFrameFormat, QFont, QTextBlockFormat
 from PyQt5.QtPrintSupport import QPrintPreviewDialog
 from lib.Delegates import NumDelegate,  ReadonlyDelegate,  TimeDelegate
@@ -56,38 +56,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     splash = None
     
     args = None
-    
-    def setSplash(self,  splash):
-        self.splash = splash
-    
-    def setRemoteUI(self,  value):
-        self.RemoteEdit = value
-        if value:
-            self.menuDatei.menuAction().setVisible(False)
-            self.actionDatenbank_bearbeiten_2.setEnabled(False)
-            self.actionDatenbank_laden.setEnabled(False)
-            self.actionDatenbank_speichern.setEnabled(False)
-            self.actionDatenbank_speichern_unter.setEnabled(False)
-            self.actionEinstellungen.setEnabled(False)
-            self.actionEinstellungenPortable.setEnabled(True)
-            self.actionSpeichernPortable.setEnabled(True)
-            self.menuPortableDatei.menuAction().setVisible(True)
-            self.menuZusammenarbeit.menuAction().setVisible(False)
-            self.actionExport.setEnabled(False)
-            self.actionImport.setEnabled(False)
-        else:
-            self.menuDatei.menuAction().setVisible(True)
-            self.actionDatenbank_bearbeiten_2.setEnabled(True)
-            self.actionDatenbank_laden.setEnabled(True)
-            self.actionDatenbank_speichern.setEnabled(True)
-            self.actionDatenbank_speichern_unter.setEnabled(True)
-            self.actionEinstellungen.setEnabled(True)
-            self.actionEinstellungenPortable.setEnabled(False)
-            self.actionSpeichernPortable.setEnabled(False)
-            self.menuPortableDatei.menuAction().setVisible(False)
-            self.menuZusammenarbeit.menuAction().setVisible(True)
-            self.actionExport.setEnabled(True)
-            self.actionImport.setEnabled(True)
 
     def __init__(self, args=None,  splash=None, parent=None):
         """
@@ -126,7 +94,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         tW.setRowCount(0)
         tW.setColumnCount(20)
         tW.setSelectionMode(QAbstractItemView.SingleSelection)
-        tW.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        hdr = self.tableWidget.horizontalHeader()
+        hdr.setSectionResizeMode(QHeaderView.ResizeToContents)
+        hdr.setMinimumSectionSize(50)
+        hdr.setMinimumSectionSize(TableCols.NAME, 100)
+        hdr.setMinimumSectionSize(TableCols.VORNAME, 100)
+        #hdr.setSectionResizeMode(TableCols.NAME, QHeaderView.Stretch)
+        #hdr.setSectionResizeMode(TableCols.VORNAME, QHeaderView.Stretch)
                 
         tW.setColumnHidden(TableCols.UID,  TableHide.UID)
         tW.setColumnHidden(TableCols.NAME,  TableHide.NAME)
@@ -194,6 +168,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.nCalc = CalcNote()
         
         self.setRemoteUI(False)
+        if self.doRec and os.path.isfile(self.pCfg.getRecoverFile()):
+            reply = QMessageBox.question(self, 'FFSportfest', 'Es wurde eine Absturzsicherung gefunden - wahrscheinlich ist das Programm abgestürzt. Möchten Sie die Daten laden? Wenn nicht werden die Daten gelöscht - eine Wiederherstellung ist dann nicht mehr möglich!', QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+            if reply == QMessageBox.Yes:
+                self.loadRecovery()
+            else:
+                self.clearRecovery()
+                
         if not args.filename is None and os.path.isfile(args.filename): #TODO: Relativer Pfad?
             if str(args.filename).endswith(".fmd"):
                 self.setRemoteUI(True)
@@ -213,7 +194,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             splash.finish(self)
             
         #self.setRemoteUI(True)
-                
+    
+    def setSplash(self,  splash):
+        self.splash = splash
+    
+    def setRemoteUI(self,  value):
+        self.RemoteEdit = value
+        if value:
+            self.menuDatei.menuAction().setVisible(False)
+            self.actionDatenbank_bearbeiten_2.setEnabled(False)
+            self.actionDatenbank_laden.setEnabled(False)
+            self.actionDatenbank_speichern.setEnabled(False)
+            self.actionDatenbank_speichern_unter.setEnabled(False)
+            self.actionEinstellungen.setEnabled(False)
+            self.actionEinstellungenPortable.setEnabled(True)
+            self.actionEinstellungenPortable.setMenuRole(QAction.MenuRole.QAction.PreferencesRole)
+            self.actionSpeichernPortable.setEnabled(True)
+            self.actionBeendenPortable.setEnabled(True)
+            self.actionBeendenPortable.setMenuRole(QAction.MenuRole.QAction.QuitRole)
+            self.actionBeenden.setEnabled(False)
+            self.menuPortableDatei.menuAction().setVisible(True)
+            self.menuZusammenarbeit.menuAction().setVisible(False)
+            self.actionExport.setEnabled(False)
+            self.actionImport.setEnabled(False)
+        else:
+            self.menuDatei.menuAction().setVisible(True)
+            self.actionDatenbank_bearbeiten_2.setEnabled(True)
+            self.actionDatenbank_laden.setEnabled(True)
+            self.actionDatenbank_speichern.setEnabled(True)
+            self.actionDatenbank_speichern_unter.setEnabled(True)
+            self.actionEinstellungen.setEnabled(True)
+            self.actionEinstellungen.setMenuRole(QAction.MenuRole.QAction.PreferencesRole)
+            self.actionEinstellungenPortable.setEnabled(False)
+            self.actionSpeichernPortable.setEnabled(False)
+            self.actionBeendenPortable.setEnabled(False)
+            self.actionBeenden.setEnabled(True)
+            self.actionBeenden.setMenuRole(QAction.MenuRole.QAction.QuitRole)
+            self.menuPortableDatei.menuAction().setVisible(False)
+            self.menuZusammenarbeit.menuAction().setVisible(True)
+            self.actionExport.setEnabled(True)
+            self.actionImport.setEnabled(True)
+    
     def disableUserInput(self):
         self.tableWidget.setEnabled(False)
         self.klasseCombo.setEnabled(False)
@@ -308,17 +329,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 else:
                     event.ignore()
     
-    @pyqtSlot(QTableWidgetItem, QTableWidgetItem)
-    def on_tableWidget_currentItemChanged(self, current, previous):
-        """
-        Slot documentation goes here.
-        
-        @param current DESCRIPTION
-        @type QTableWidgetItem
-        @param previous DESCRIPTION
-        @type QTableWidgetItem
-        """
-    
     @pyqtSlot(int, int)
     def on_tableWidget_cellChanged(self, row, column):
         """
@@ -405,6 +415,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.wurfMeterEdit.blockSignals(False)
             self.JSD[self.tableWidget.item(item.row(), TableCols.KLASSE).text()][self.tableWidget.item(item.row(), TableCols.UID).text()]['wurf_v'] = item.text()
         self.calcRow(item.row())
+        self.considerRecovery()
         
     def calcRow(self,  row):
         self.dataChanged = True
@@ -674,7 +685,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.loadDb(db_file)
             
-    def loadDb(self,  path):
+    def loadDb(self,  path, recovery=False):
         if not os.path.isfile(path):
             return False
         self.loadPD = QProgressDialog()
@@ -684,8 +695,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.loadPD.setRange(0,  5)
         self.loadPD.show()
         self.loadPD.setValue(1)
-        self.dbPath = path
-        if self.loadLastDb and not self.RemoteEdit:
+        if not recovery:
+            self.dbPath = path
+        if self.loadLastDb and not self.RemoteEdit and not recovery:
             self.pCfg.setLastDb(str(path))
         try:
             self.loadPD.setValue(2)
@@ -714,7 +726,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             msg.setDetailedText(str(exc))
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec_()
-        if self.pCfg.getBackupFile():
+        if self.pCfg.getBackupFile() and not recovery:
             try:
                 shutil.copy2(str(path), str(path) + "~") 
             except PermissionError as perb:
@@ -803,6 +815,50 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return "M"
         else:
             return "W"
+            
+    def considerRecovery(self):
+        if self.doRec:
+            try:
+                with open(self.pCfg.getRecoverFile(), 'w') as f:
+                    json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
+            except Exception as e:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Die Absturzsicherungsdatei konnte nicht geschrieben werden! Bitte überprüfen Sie ob Sie für die folgende Datei Schreibrechte besitzen: \n" + str(self.rcv) + "\nDie Funktion wird zunächst abgeschaltet, damit Sie weiterarbeiten können!")
+                msg.setWindowTitle("FFSportfest - Absturzsicherung")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+                self.pCfg.setRecovery(False)
+                    
+    def clearRecovery(self):
+        if self.doRec:
+            rcv = self.pCfg.getRecoverFile()
+            try:
+                if os.path.isfile(rcv):
+                    os.remove(rcv)
+            except Exception:
+                msg = QMessageBox()
+                msg.setIcon(QMessageBox.Warning)
+                msg.setText("Die Datei der Absturzsicherung konnte nicht gelöscht werden. Sie werden möglicherweise beim nächsten Programmstart über einen Programmabsturz benachrichtigt, obwohl das Programm nicht abgestürzt ist. Sie können die Datei manuell löschen, sie befindet sich hier: \n" + str(self.rcv))
+                msg.setWindowTitle("FFSportfest - Absturzsicherung")
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+                
+    def loadRecovery(self):
+        self.loadDb(self.pCfg.getRecoverFile(), True)
+        self.setWindowTitle("(Wiederhergestellt) - FFSportfest")
+        
+    def clearBackup(self):
+        try:
+            if os.path.isfile(self.dbPath + "~"):
+                os.remove(self.dbPath + "~")
+        except Exception:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Warning)
+            msg.setText("Die Sicherungsdatei konnte nicht entfernt werden (dies sind die Dateien mit dem Suffix ~) - Sie können dies manuell tun indem Sie folgende Datei löschen: \n" + str(self.dbPath + "~"))
+            msg.setWindowTitle("FFSportfest - Sicherungsdatei")
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
             
     def verifyJSON(self,  det):
         if not 'name' in det:
@@ -1008,6 +1064,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 msg.setDetailedText("Dateipfad: " + str(self.dbPath) + "\n" + str(per))
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
+            
+            self.clearBackup()
         else:
             self.on_actionDatenbank_speichern_unter_triggered()
     
@@ -1039,13 +1097,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 msg.exec_()
             
             self.dataChanged = False
+            self.clearBackup()
     
     @pyqtSlot()
     def on_action_ber_FFSportfest_triggered(self):
         """
         Zeigt Informationen über das Programm an
         """
-        QMessageBox.about(self, "Über FFSportfest...",  "<h1>Über FFSportfest</h1><small>Version " + FFSportfest.VERSION + "</small><p>Geschrieben von Fabian Schillig</p><br><code>Dieses Programm ist Freie Software: Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation, Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren veröffentlichten Version, weiterverbreiten und/oder modifizieren.<br><br>Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die GNU General Public License für weitere Details.<br><br>Sie sollten eine Kopie der GNU General Public License zusammen mit diesem Programm erhalten haben. Wenn nicht, siehe <a href='http://www.gnu.org/licenses/'>http://www.gnu.org/licenses/</a>.</code><br><p>© Fabian Schillig 2017. Der Quellcode ist unter <a href='https://github.com/XorgMC/ffx-sportfest'>https://github.com/XorgMC/ffx-sportfest</a> erhältlich.</p>")
+        QMessageBox.about(self, "Über FFSportfest...",  "<h1>Über FFSportfest</h1><small>Version " + FFSportfest.VERSION + "</small><p>Geschrieben von Fabian Schillig</p><br><code>Dieses Programm ist Freie Software: Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation, Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren veröffentlichten Version, weiterverbreiten und/oder modifizieren.<br><br>Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die GNU General Public License für weitere Details.<br><br>Sie sollten eine Kopie der GNU General Public License zusammen mit diesem Programm erhalten haben. Wenn nicht, siehe <a href='http://www.gnu.org/licenses/'>http://www.gnu.org/licenses/</a>.</code><br><p>© Fabian Schillig 2017-2018. Der Quellcode ist unter <a href='https://github.com/XorgMC/ffx-sportfest'>https://github.com/XorgMC/ffx-sportfest</a> erhältlich.</p>")
     
     @pyqtSlot()
     def on_action_ber_Qt_triggered(self):

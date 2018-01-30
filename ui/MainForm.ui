@@ -24,6 +24,12 @@
       <property name="whatsThis">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In dieser Tabelle können die Ergebnisse des Schülers bearbeitet werden. Es gibt einige Sondertasten um die Arbeit effizienter zu gestalten:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Enter = Nächste Zeile, gleiche Spalte&lt;/li&gt;&lt;li&gt;Tab = Nächste Spalte, gleiche Zeile&lt;/li&gt;&lt;li&gt;Backspace = An den Anfang der Zeile&lt;/li&gt;&lt;li&gt;Entf. = Ergebnis löschen&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="selectionMode">
+       <enum>QAbstractItemView::SingleSelection</enum>
+      </property>
      </widget>
     </item>
     <item row="0" column="1">
@@ -651,6 +657,9 @@
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionDatenbank_laden">
    <property name="icon">
@@ -711,6 +720,9 @@
    <property name="text">
     <string>Über FFSportfest..</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
   </action>
   <action name="action_ber_Qt">
    <property name="icon">
@@ -719,6 +731,9 @@
    </property>
    <property name="text">
     <string>Über Qt...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
   <action name="actionDrucken">
@@ -831,6 +846,9 @@
    <property name="shortcut">
     <string>Ctrl+Q</string>
    </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
   </action>
   <action name="actionEinstellungen">
    <property name="icon">
@@ -839,6 +857,9 @@
    </property>
    <property name="text">
     <string>Einstellungen</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionEinstellungenPortable">
@@ -851,6 +872,9 @@
    </property>
    <property name="toolTip">
     <string>Öffnet den Einstellungsdialog</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
  </widget>

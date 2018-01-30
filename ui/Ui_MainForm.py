@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '/home/xorg/eric/Sportfest/ui/MainForm.ui'
+# Form implementation generated from reading ui file '/home/xorg/Python IDE/Sportfest/ui/MainForm.ui'
 #
 # Created by: PyQt5 UI code generator 5.7
 #
@@ -20,6 +20,8 @@ class Ui_MainWindow(object):
         self.gridLayout = QtWidgets.QGridLayout(self.centralWidget)
         self.gridLayout.setObjectName("gridLayout")
         self.tableWidget = FTableWidget(self.centralWidget)
+        self.tableWidget.setAlternatingRowColors(True)
+        self.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
@@ -312,6 +314,7 @@ class Ui_MainWindow(object):
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/menu_icons_16/exit"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionBeenden.setIcon(icon1)
+        self.actionBeenden.setMenuRole(QtWidgets.QAction.NoRole)
         self.actionBeenden.setObjectName("actionBeenden")
         self.actionDatenbank_laden = QtWidgets.QAction(MainWindow)
         icon2 = QtGui.QIcon()
@@ -334,11 +337,13 @@ class Ui_MainWindow(object):
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(":/menu_icons_16/about"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_ber_FFSportfest.setIcon(icon5)
+        self.action_ber_FFSportfest.setMenuRole(QtWidgets.QAction.AboutRole)
         self.action_ber_FFSportfest.setObjectName("action_ber_FFSportfest")
         self.action_ber_Qt = QtWidgets.QAction(MainWindow)
         icon6 = QtGui.QIcon()
         icon6.addPixmap(QtGui.QPixmap(":/appicons/qt"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.action_ber_Qt.setIcon(icon6)
+        self.action_ber_Qt.setMenuRole(QtWidgets.QAction.AboutQtRole)
         self.action_ber_Qt.setObjectName("action_ber_Qt")
         self.actionDrucken = QtWidgets.QAction(MainWindow)
         self.actionDrucken.setEnabled(False)
@@ -372,14 +377,17 @@ class Ui_MainWindow(object):
         self.actionSpeichernPortable.setObjectName("actionSpeichernPortable")
         self.actionBeendenPortable = QtWidgets.QAction(MainWindow)
         self.actionBeendenPortable.setIcon(icon1)
+        self.actionBeendenPortable.setMenuRole(QtWidgets.QAction.NoRole)
         self.actionBeendenPortable.setObjectName("actionBeendenPortable")
         self.actionEinstellungen = QtWidgets.QAction(MainWindow)
         icon11 = QtGui.QIcon()
         icon11.addPixmap(QtGui.QPixmap(":/menu_icons_16/settings"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionEinstellungen.setIcon(icon11)
+        self.actionEinstellungen.setMenuRole(QtWidgets.QAction.NoRole)
         self.actionEinstellungen.setObjectName("actionEinstellungen")
         self.actionEinstellungenPortable = QtWidgets.QAction(MainWindow)
         self.actionEinstellungenPortable.setIcon(icon11)
+        self.actionEinstellungenPortable.setMenuRole(QtWidgets.QAction.NoRole)
         self.actionEinstellungenPortable.setObjectName("actionEinstellungenPortable")
         self.menuDatei.addAction(self.actionDatenbank_bearbeiten_2)
         self.menuDatei.addSeparator()
