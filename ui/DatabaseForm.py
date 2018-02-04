@@ -7,11 +7,12 @@ Module implementing DatabaseEditor.
 from PyQt5.QtCore import pyqtSlot,  Qt,  QTimer
 from PyQt5.QtWidgets import QMainWindow,  QFileDialog,  QProgressDialog,  QMessageBox,  QAbstractItemView, QTableWidgetItem
 from PyQt5.QtGui import QColor
-import os,  json,  shutil,  uuid,  codecs
+import os,  json,  shutil,  uuid,  codecs, re
 from lib.Constants import TableCols, TableParams
 from lib.Delegates import GeschlechtDelegate,  KlasseDelegate,  ReadonlyDelegate
 from lib.NameUtil import NameUtil
 from ui.ExcelDialog import ExcelImporter
+from ui.KlasseDeleteDialog import KlasseDeleteDialog
 
 from .Ui_DatabaseForm import Ui_MainWindow
 
@@ -41,6 +42,8 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
     T3V = True
     T4V = True
     TVR = 0
+    
+    sortingEnabled = True
     
     """
     Datenbankeditor
@@ -76,7 +79,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         self.loadDb(path)
     
     def considerFeedback(self):
-        if self.parent.dbPath is None:
+        if self.parent.dbPath is None and self.mDbPath is not None:
             self.parent.loadDb(self.mDbPath)
         
     def closeEvent(self,  event):
@@ -279,8 +282,10 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         """
         self.tableWidget.blockSignals(True)
         self.actionSort.setEnabled(False)
+        self.sortingEnabled = False
         #self.tableWidget.setSortingEnabled(False)
         sc = self.tableWidget.rowCount()
+        print("AddNew: rowCount is {}".format(str(sc)))
         SUID = self.getSUID()
         if not "working" in self.JSN:
             self.JSN["working"] = {}
@@ -478,6 +483,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         self.hasChanged = False
         self.setChanged(True)
         self.addNew()
+        self.mDbPath = None
         self.setUserInput(True)
         self.tableWidget.setFocus()
         
@@ -557,13 +563,12 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         """
         self.statusBar.showMessage("Öffne Datenbank...") 
         opts = QFileDialog.Options()
-        if not self.cfg.getNativeDialogs():
-            opts |= QFileDialog.DontUseNativeDialog
         db_file,  _ = QFileDialog.getOpenFileName(self, "Datenbank öffnen", os.path.expanduser("~"), "FFD-Datenbank (*.ffd);;Sicherungsdateien (*.ffd~);;Alle Dateien (*.*)",  options=opts);
 
         if db_file:
             self.fileName = str(db_file)
             self.setWindowTitle("{} - Datenbankeditor - FFSportfest".format(str(os.path.basename(db_file))))
+            self.mDbPath = str(db_file)
             self.loadDb(db_file)
     
     @pyqtSlot()
@@ -594,6 +599,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         impt.exec_()
         if not impt.getReturnDb() is None:
             self.fileName = str(impt.getReturnDb())
+            self.mDbPath = str(impt.getReturnDb())
             self.loadDb(impt.getReturnDb())
             self.hasChanged = True
             self.setChanged(False)
@@ -603,8 +609,19 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         """
         Button "Schließen"
         """
-        #TODO
-        print("Close")
+        if self.hasChanged:
+            reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
+            if reply == QMessageBox.Save:
+                self.on_actionSave_triggered()
+                if not self.hasChanged:
+                    self.considerFeedback()
+                    self.close()
+            elif reply == QMessageBox.Discard:
+                self.considerFeedback()
+                self.close()
+        else:
+            self.considerFeedback()
+            self.close()
         
     def setUserInput(self, enable):
         """
@@ -617,6 +634,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         self.actionMoveKlasse.setEnabled(enable)
         self.actionSave.setEnabled(enable)
         self.actionSaveAs.setEnabled(enable)
+        self.actionDeleteKlasse.setEnabled(enable)
         
     def loadDb(self,  path):
         """
@@ -680,6 +698,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         """
         self.tableWidget.blockSignals(True)
         self.actionSort.setEnabled(False)
+        self.sortingEnabled = False
         #self.tableWidget.setSortingEnabled(False)
         while (self.tableWidget.rowCount() > 0):
             self.tableWidget.removeRow(0);
@@ -718,6 +737,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                 self.tableWidget.setItem(sc,TableCols.KRANK, QTableWidgetItem(str(self.getKrank(iskrank))))
                 sc += 1
         #self.tableWidget.setSortingEnabled(True)
+        self.sortingEnabled = True
         self.actionSort.setEnabled(True)
         self.cfg.doSortBy(self.tableWidget)
         self.tableWidget.blockSignals(False) 
@@ -859,12 +879,15 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                     except Exception:
                         print("Error")
                 self.tableWidget.blockSignals(False)
-                self.tableWidget.setSortingEnabled(True)
+                self.actionSort.setEnabled(True)
+                self.sortingEnabled = True
+                #self.tableWidget.setSortingEnabled(True)
                 
         
         print("changed")
         if not self.cfg is None:
-            if self.cfg.getInstantSort() and self.tableWidget.isSortingEnabled():
+            #if self.cfg.getInstantSort() and self.tableWidget.isSortingEnabled():
+            if self.cfg.getInstantSort() and self.sortingEnabled:
                 print("SORITNG!!!")
                 self.cfg.doSortBy(self.tableWidget)
     
@@ -879,7 +902,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         @type QTableWidgetItem
         """
         # TODO: Wertzuweisung wenn nichts ausgewählt #← But why wenn dieses Event auftritt sollte immer etwas ausgewählt sein???
-        if not len(self.tableWidget.selectedIndexes()) == 0: #← Was hab ich da getan?
+        if not len(self.tableWidget.selectedIndexes()) == 0 and current is not None: #← Was hab ich da getan?
             if current.column() == TableCols.KLASSE:
                 print("Klasse gemerkt")
                 self.klasseZeile = current.row()
@@ -903,3 +926,31 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
             item.setText(self.getKrank(krank))
             #self.JSD[self.tableWidget.item(item.row(), TableCols.KLASSE).text()][self.tableWidget.item(item.row(), TableCols.UID).text()]['krank'] = krank
             self.JSN[self.getCurrentRowKlasse(item.row())][self.tableWidget.item(item.row(), TableCols.UID).text()]['krank'] = self.istKrank(item.text())
+    
+    @pyqtSlot()
+    def on_actionDeleteKlasse_triggered(self):
+        """
+        Entfernt eine Klasse
+        """
+        #TODO: Alle Klassen und Klassenstufen abrufen
+        rx = re.compile(r'^([0-9]{1,2})\.([0-9]{1})$')
+        klassen = [i for i in sorted(self.JSN.keys()) if rx.search(i)]
+        klassenstufen = [ ]
+        for klasse in klassen:
+            klassenstufen.append(re.findall("^[^\d]*(\d+)", klasse)[0])
+        klassen.extend(set(klassenstufen))
+        klassen.sort()
+        print(klassen)
+        #regex = re.compile(r'^([0-9]{1,2})$')
+        exp = KlasseDeleteDialog(klassen,  self)
+        exp.exec_()
+        res = exp.getKlasse()
+        if res is not None:
+            if re.match("^([0-9]{1,2})\.([0-9]{1})$",  res):
+                del self.JSN[res]
+            else:
+                del me #TODO
+        print(exp.getKlasse())
+        #del self.JSN[SKlasse][SUID]
+        #QMessageBox.warning(self, "FFSportfest", "Diese Funktion wurde noch nicht implementiert!", QMessageBox.Ok, QMessageBox.Ok)
+

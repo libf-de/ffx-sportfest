@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project Sportfest -->
-<!-- Saved: 2018-01-28, 22:16:38 -->
+<!-- Saved: 2018-01-30, 10:13:31 -->
 <!-- Copyright (C) 2018 Fabian Schillig, xorgmc@gmail.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -33,6 +33,7 @@
     <Source>ui/ExcelDialog.py</Source>
     <Source>ui/ExportDialog.py</Source>
     <Source>ui/GeschlechtInputDialog.py</Source>
+    <Source>ui/KlasseDeleteDialog.py</Source>
     <Source>ui/KlasseInputDialog.py</Source>
     <Source>ui/MainForm.py</Source>
     <Source>ui/SettingsDialog.py</Source>
@@ -43,6 +44,7 @@
     <Source>ui/Ui_ExcelDialog.py</Source>
     <Source>ui/Ui_ExportDialog.py</Source>
     <Source>ui/Ui_GeschlechtInputDialog.py</Source>
+    <Source>ui/Ui_KlasseDeleteDialog.py</Source>
     <Source>ui/Ui_KlasseInputDialog.py</Source>
     <Source>ui/Ui_MainForm.py</Source>
     <Source>ui/Ui_Settings.py</Source>
@@ -57,6 +59,7 @@
     <Form>ui/ExcelDialog.ui</Form>
     <Form>ui/ExportDialog.ui</Form>
     <Form>ui/GeschlechtInputDialog.ui</Form>
+    <Form>ui/KlasseDeleteDialog.ui</Form>
     <Form>ui/KlasseInputDialog.ui</Form>
     <Form>ui/MainForm.ui</Form>
     <Form>ui/SettingsDialog.ui</Form>

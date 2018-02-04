@@ -36,7 +36,7 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
     Filter2 = "Alle"
     Klassen = [ "Alle" ]
     
-    def __init__(self, parent=None):
+    def __init__(self, config, parent=None):
         """
         Constructor
         
@@ -46,7 +46,8 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         super(EvalWindow, self).__init__(parent)
         self.setupUi(self)
 
-        self.pCfg = Configuration()
+        #self.pCfg = Configuration()
+        self.pCfg = config
         #self.setWindowIcon(QIcon(self.pCfg.getIconPath("eval"))) TODO: Icon
         
         self.par = parent

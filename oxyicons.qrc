@@ -19,6 +19,7 @@
   </qresource>
   <qresource prefix="toolbar_icons_48">
     <file alias="sort">oxygen/48x48/actions/view-sort-ascending.png</file>
+    <file alias="trash">oxygen/48x48/actions/trash-empty.png</file>
     <file alias="addstudent">oxygen/48x48/actions/list-add-user.png</file>
     <file alias="delstudent">oxygen/48x48/actions/list-remove-user.png</file>
     <file alias="graduate">oxygen/48x48/actions/go-up-search.png</file>

@@ -64,5 +64,4 @@ class ExportDialog(QDialog, Ui_Dialog):
         """
         Slot documentation goes here.
         """
-        # TODO: not implemented yet
-        raise NotImplementedError
+        self.reject()

@@ -34,6 +34,9 @@ class ExcelImporter(QDialog, Ui_Dialog):
     """
     Class documentation goes here.
     """
+    
+    procDbase = None
+    
     def __init__(self, parent=None):
         """
         Constructor

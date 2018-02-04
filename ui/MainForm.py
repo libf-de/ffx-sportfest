@@ -97,10 +97,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         hdr = self.tableWidget.horizontalHeader()
         hdr.setSectionResizeMode(QHeaderView.ResizeToContents)
         hdr.setMinimumSectionSize(50)
-        hdr.setMinimumSectionSize(TableCols.NAME, 100)
-        hdr.setMinimumSectionSize(TableCols.VORNAME, 100)
-        #hdr.setSectionResizeMode(TableCols.NAME, QHeaderView.Stretch)
-        #hdr.setSectionResizeMode(TableCols.VORNAME, QHeaderView.Stretch)
+        hdr.setSectionResizeMode(TableCols.NAME, QHeaderView.Interactive)
+        hdr.setSectionResizeMode(TableCols.VORNAME, QHeaderView.Interactive)
                 
         tW.setColumnHidden(TableCols.UID,  TableHide.UID)
         tW.setColumnHidden(TableCols.NAME,  TableHide.NAME)
@@ -152,9 +150,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         klasseCb = self.klasseCombo
         klasseCb.blockSignals(True)
-        klasseCb.addItem("7.1")
-        klasseCb.addItem("7.2")
-        klasseCb.addItem("7.3")
+        klasseCb.addItem("Alle")
         klasseCb.blockSignals(False)
         
         gCb = self.geschlechtCombo
@@ -197,6 +193,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def setSplash(self,  splash):
         self.splash = splash
+        
+    def resizeTable(self):
+        hdr = self.tableWidget.horizontalHeader()
+        hdr.resizeSection(TableCols.NAME, hdr.sectionSize(TableCols.NAME) + 20)
+        hdr.resizeSection(TableCols.VORNAME, hdr.sectionSize(TableCols.VORNAME) + 20)
     
     def setRemoteUI(self,  value):
         self.RemoteEdit = value
@@ -208,10 +209,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDatenbank_speichern_unter.setEnabled(False)
             self.actionEinstellungen.setEnabled(False)
             self.actionEinstellungenPortable.setEnabled(True)
-            self.actionEinstellungenPortable.setMenuRole(QAction.MenuRole.QAction.PreferencesRole)
+            self.actionEinstellungenPortable.setMenuRole(QAction.PreferencesRole)
             self.actionSpeichernPortable.setEnabled(True)
             self.actionBeendenPortable.setEnabled(True)
-            self.actionBeendenPortable.setMenuRole(QAction.MenuRole.QAction.QuitRole)
+            self.actionBeendenPortable.setMenuRole(QAction.QuitRole)
             self.actionBeenden.setEnabled(False)
             self.menuPortableDatei.menuAction().setVisible(True)
             self.menuZusammenarbeit.menuAction().setVisible(False)
@@ -224,12 +225,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.actionDatenbank_speichern.setEnabled(True)
             self.actionDatenbank_speichern_unter.setEnabled(True)
             self.actionEinstellungen.setEnabled(True)
-            self.actionEinstellungen.setMenuRole(QAction.MenuRole.QAction.PreferencesRole)
+            self.actionEinstellungen.setMenuRole(QAction.PreferencesRole)
             self.actionEinstellungenPortable.setEnabled(False)
             self.actionSpeichernPortable.setEnabled(False)
             self.actionBeendenPortable.setEnabled(False)
             self.actionBeenden.setEnabled(True)
-            self.actionBeenden.setMenuRole(QAction.MenuRole.QAction.QuitRole)
+            self.actionBeenden.setMenuRole(QAction.QuitRole)
             self.menuPortableDatei.menuAction().setVisible(False)
             self.menuZusammenarbeit.menuAction().setVisible(True)
             self.actionExport.setEnabled(True)
@@ -316,6 +317,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if self.RemoteEdit:
                 reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert und nicht gespeichert! Möchten Sie das Programm wirklich beenden?', QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
                 if reply == QMessageBox.Yes:
+                    self.clearRecovery()
                     event.accept()
                 else:
                     event.ignore()
@@ -323,11 +325,29 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern und dann das Programm beenden?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
                 if reply == QMessageBox.Save:
                     self.on_actionDatenbank_speichern_triggered()
+                    self.clearRecovery()
                     event.accept()
                 elif reply == QMessageBox.Discard:
+                    self.clearRecovery()
                     event.accept()
                 else:
                     event.ignore()
+        else:
+            self.clearRecovery()
+            event.accept()
+    
+    def setChanged(self, value):
+        """
+        Setzt ob die Datenbank verändert wurde
+        @param value Verändert?
+        """
+        if not value == self.dataChanged:
+            if value:
+                self.setWindowTitle("{}* - FFSportfest".format(os.path.basename(self.dbPath)))
+                self.dataChanged = True
+            else:
+                self.setWindowTitle("{} - FFSportfest".format(os.path.basename(self.dbPath)))
+                self.dataChanged = False
     
     @pyqtSlot(int, int)
     def on_tableWidget_cellChanged(self, row, column):
@@ -418,7 +438,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.considerRecovery()
         
     def calcRow(self,  row):
-        self.dataChanged = True
+        self.setChanged(True)
         self.tableWidget.blockSignals(True)
         klasse = self.tableWidget.item(row, TableCols.KLASSE).text()
         imale = (self.tableWidget.item(row, TableCols.GESCHLECHT).text().lower() == "m")
@@ -923,7 +943,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for klasse,  schueler in self.JSD.items():
             if not self.validKlasse(klasse):
                 print("Ignoriere ungueltige Klasse {}".format(klasse))
-                return
+                continue
             if dbLoad:
                 self.addKlasse(klasse)
             if self.doFilter(filterKlasse,  klasse):
@@ -983,6 +1003,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.EvalW.refreshKlassen(self.alleKlassen)
             
             self.klasseCombo.setCurrentIndex(0)
+        
+        #self.resizeTable()
                 
     
     @pyqtSlot()
@@ -1055,7 +1077,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 with open(self.dbPath, 'w') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
-                    self.dataChanged = False
+                    self.setChanged(False)
             except PermissionError as per:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Critical)
@@ -1086,7 +1108,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 with open(filename, 'w') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
-                    self.dataChanged = False
+                    self.setChanged(False)
             except PermissionError as per:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Critical)
@@ -1096,7 +1118,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
             
-            self.dataChanged = False
+            self.setChanged(False)
             self.clearBackup()
     
     @pyqtSlot()
@@ -1279,7 +1301,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 with open(self.dbPath, 'w') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
-                    self.dataChanged = False
+                    self.setChanged(False)
             except PermissionError as per:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Critical)
@@ -1305,7 +1327,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 with open(filename, 'w') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
-                    self.dataChanged = False
+                    self.setChanged(False)
             except PermissionError as per:
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Critical)
@@ -1315,8 +1337,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
                 return;
-            
-            self.dataChanged = False
     
     @pyqtSlot()
     def on_actionBeendenPortable_triggered(self):
@@ -1369,3 +1389,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         pprefs = SettingsPortableDialog(self.pCfg, self)
         pprefs.exec_()
+    
+    @pyqtSlot()
+    def on_actionBeenden_triggered(self):
+        """
+        Slot documentation goes here.
+        """
+        self.close()

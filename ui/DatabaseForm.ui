@@ -75,6 +75,7 @@
    <addaction name="actionAdd"/>
    <addaction name="actionRemove"/>
    <addaction name="actionMoveKlasse"/>
+   <addaction name="actionDeleteKlasse"/>
    <addaction name="actionSort"/>
   </widget>
   <action name="actionAdd">
@@ -216,6 +217,21 @@
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Sortiert die Schüler nach Nach- und Vornamen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionDeleteKlasse">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../oxyicons.qrc">
+     <normaloff>:/toolbar_icons_48/trash</normaloff>:/toolbar_icons_48/trash</iconset>
+   </property>
+   <property name="text">
+    <string>Klasse löschen</string>
+   </property>
+   <property name="toolTip">
+    <string>Löscht eine Klasse einschließlich der Schüler</string>
    </property>
   </action>
  </widget>

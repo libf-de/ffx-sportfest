@@ -96,6 +96,12 @@ class Ui_MainWindow(object):
         icon10.addPixmap(QtGui.QPixmap(":/toolbar_icons_48/sort"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSort.setIcon(icon10)
         self.actionSort.setObjectName("actionSort")
+        self.actionDeleteKlasse = QtWidgets.QAction(MainWindow)
+        self.actionDeleteKlasse.setEnabled(False)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(":/toolbar_icons_48/trash"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionDeleteKlasse.setIcon(icon11)
+        self.actionDeleteKlasse.setObjectName("actionDeleteKlasse")
         self.menuDatei.addAction(self.actionNeue_Datenbank)
         self.menuDatei.addAction(self.actionFromExcel)
         self.menuDatei.addSeparator()
@@ -108,6 +114,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionAdd)
         self.toolBar.addAction(self.actionRemove)
         self.toolBar.addAction(self.actionMoveKlasse)
+        self.toolBar.addAction(self.actionDeleteKlasse)
         self.toolBar.addAction(self.actionSort)
 
         self.retranslateUi(MainWindow)
@@ -140,6 +147,8 @@ class Ui_MainWindow(object):
         self.actionClose.setText(_translate("MainWindow", "Beenden"))
         self.actionSort.setText(_translate("MainWindow", "Sortieren"))
         self.actionSort.setToolTip(_translate("MainWindow", "<html><head/><body><p>Sortiert die Schüler nach Nach- und Vornamen</p></body></html>"))
+        self.actionDeleteKlasse.setText(_translate("MainWindow", "Klasse löschen"))
+        self.actionDeleteKlasse.setToolTip(_translate("MainWindow", "Löscht eine Klasse einschließlich der Schüler"))
 
 from FTableWidget import FTableWidget
 import oxyicons_rc
