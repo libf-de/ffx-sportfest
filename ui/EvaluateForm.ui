@@ -223,10 +223,10 @@
      <disabledon>:/themes/oxygen/128x128/places/favorites.png</disabledon>:/toolbar_icons_48/favorites</iconset>
    </property>
    <property name="text">
-    <string>Platzier. neu ermitteln</string>
+    <string>Plätze neu ermitteln</string>
    </property>
    <property name="iconText">
-    <string> Platzier. neu ermitteln</string>
+    <string> Plätze neu ermitteln</string>
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ermittelt die Platzierungen für den ausgewählten Filter neu. Dies passiert normalerweise automatisch, kann aber mit dieser Funktion erzwungen werden.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

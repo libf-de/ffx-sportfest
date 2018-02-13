@@ -6,8 +6,8 @@ Module implementing EvalWindow.
 
 from PyQt5.QtCore import pyqtSlot,  Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem,  QAbstractItemView,  QDialog,  QMessageBox, QFileDialog
-from lib.Delegates import NumDelegate,  ReadonlyDelegate,  TimeDelegate
+from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem,  QAbstractItemView,  QDialog,  QMessageBox, QFileDialog, QHeaderView
+from lib.Delegates import ReadonlyDelegate
 from lib.Constants import TableCols, ETableCols,  TableHide,  TableParams
 from Configuration import Configuration
 from FTableWidgetItem import FTableWidgetItem
@@ -79,10 +79,14 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         tW.setColumnHidden(TableCols.NOTE,   TableHide.NOTE)
         tW.setColumnHidden(TableCols.KRANK,  TableHide.KRANK)
         
-        tW.setItemDelegateForColumn(TableCols.SPRINT_V,  NumDelegate(self))
-        tW.setItemDelegateForColumn(TableCols.LAUF_V,  TimeDelegate(self))
-        tW.setItemDelegateForColumn(TableCols.SPRUNG_V,  NumDelegate(self))
-        tW.setItemDelegateForColumn(TableCols.WURF_V,  NumDelegate(self))
+        #tW.setItemDelegateForColumn(TableCols.SPRINT_V,  NumDelegate(self))
+        #tW.setItemDelegateForColumn(TableCols.LAUF_V,  TimeDelegate(self))
+        #tW.setItemDelegateForColumn(TableCols.SPRUNG_V,  NumDelegate(self))
+        #tW.setItemDelegateForColumn(TableCols.WURF_V,  NumDelegate(self))
+        tW.setItemDelegateForColumn(TableCols.SPRINT_V,  ReadonlyDelegate(self))
+        tW.setItemDelegateForColumn(TableCols.LAUF_V,  ReadonlyDelegate(self))
+        tW.setItemDelegateForColumn(TableCols.SPRUNG_V,  ReadonlyDelegate(self))
+        tW.setItemDelegateForColumn(TableCols.WURF_V,  ReadonlyDelegate(self))
         tW.setItemDelegateForColumn(TableCols.UID,  ReadonlyDelegate(self))
         tW.setItemDelegateForColumn(TableCols.NAME,  ReadonlyDelegate(self))
         tW.setItemDelegateForColumn(TableCols.VORNAME,  ReadonlyDelegate(self))
@@ -100,6 +104,12 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         tW.setItemDelegateForColumn(TableCols.NOTE,  ReadonlyDelegate(self))
         tW.setHorizontalHeaderLabels( TableParams.HEADER_LBL )
         tW.blockSignals(False)
+        
+        hdr = self.tableWidget.horizontalHeader()
+        hdr.setSectionResizeMode(QHeaderView.ResizeToContents)
+        hdr.setMinimumSectionSize(50)
+        hdr.setSectionResizeMode(TableCols.NAME, QHeaderView.Interactive)
+        hdr.setSectionResizeMode(TableCols.VORNAME, QHeaderView.Interactive)
         
         sF = self.sortFirstCombo
         sF.blockSignals(True)
@@ -296,6 +306,9 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
     def handlePaintRequest(self, printer):
         document = self.makeTableDocument()
         document.print_(printer)
+        
+    def getGermanDayName(self, ix):
+        return ["Sonntag", "Montag", "Dienstag",  "Mittwoch", "Donnerstag", "Freitag",  "Samstag"][ix]
 
     def makeTableDocument(self):
         now = datetime.datetime.now()
@@ -308,7 +321,7 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         tfmt.setBorder(2)
         tfmt.setBorderStyle(QtGui.QTextFrameFormat.BorderStyle_Solid)
         tfmt.setBorderBrush(QColor(0, 0,  0))
-        cursor.insertText("Sportfest am " + now.strftime("%A") + ", den " + now.strftime("%d.%m.%Y") + "\n")
+        cursor.insertText("Sportfest am " + self.getGermanDayName(int(now.strftime("%w"))) + ", den " + now.strftime("%d.%m.%Y") + "\n")
         cursor.movePosition(QtGui.QTextCursor.NextBlock)
         if self.sortFirstCombo.currentText() == "Punkte":
             cursor.insertText("Ausdruck: Platzierung " + self.filterFirstCombo.currentText() + " " + self.filterSecondCombo.currentText() + "\n\n")

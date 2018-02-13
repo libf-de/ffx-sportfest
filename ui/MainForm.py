@@ -49,6 +49,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     dbf = None
     RemoteEdit = False
     
+    ConfirmDelete = False
+    
     alleKlassen = []
     
     loadPD = None
@@ -75,7 +77,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.loadLastDb = self.pCfg.getLoadLastDb()
         self.doRec = self.pCfg.getRecovery()
         
-        self.EvalW = EvalWindow(self)
+        self.EvalW = EvalWindow(self.pCfg, self)
         self.dbf = DatabaseEditor(self.pCfg, self, self.dbPath)
         
         self.disableUserInput()
@@ -144,7 +146,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         tW.setHorizontalHeaderLabels( TableParams.HEADER_LBL )
         
-        tW.setIgnoredKeys([Qt.Key_Return,  Qt.Key_Enter,  Qt.Key_Tab,  Qt.Key_Backspace,  Qt.Key_Space])
+        tW.setIgnoredKeys([Qt.Key_Return,  Qt.Key_Enter,  Qt.Key_Tab,  Qt.Key_Backspace,  Qt.Key_Space, Qt.Key_Delete])
         
         tW.blockSignals(False)
         
@@ -389,7 +391,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.loadPD.setRange(0,  self.tableWidget.rowCount() - 1)
         self.loadPD.show()
         
-        for c in range(0, self.tableWidget.rowCount() - 1):
+        for c in range(0, self.tableWidget.rowCount()):
             self.calcRow(c)
             self.loadPD.setValue(c)
             
@@ -476,9 +478,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if noteCnt > 0:
                 totalNot = round(float(noteFlt / noteCnt), 1)
             else:
-                totalNot = 0
+                totalNot = 6
         else:
             totalNot = round(float((sprintNot + laufNot + sprungNot + wurfNot) / 4), 1)
+            
+        #print("Calc'd {}".format(str(totalNot)))
         
         self.tableWidget.item(row,  TableCols.SPRINT_P).setText(str(sprintPkt))
         self.JSD[klasse][self.tableWidget.item(row, TableCols.UID).text()]['sprint_p'] = sprintPkt
@@ -514,7 +518,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.sprungPunkteEdit.setText(str(sprungPkt) + " / " + str(sprungNot))
             self.wurfPunkteEdit.setText(str(wurfPkt) + " / " + str(wurfNot))
             self.punkteTotalEdit.setText(str(totalPkt))
-            #TODO: Note
+            #TODO: Note!!!
         self.syncToEval()
         
     def syncToEval(self):
@@ -554,7 +558,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         self.blankDetails()
         self.fillTable(p0,  self.getGeschlechtFromLong(self.geschlechtCombo.currentText()),  False)
-        print("CurrentIndexChanged: " + p0)
         
     def gotoNextHealthyCell(self,  crow,  ccol):
         if self.tableWidget.rowCount() == crow:
@@ -584,11 +587,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.gotoNextHealthyCell(crow, ccol)
         elif key == Qt.Key_Tab:
             if ccount - 1 == ccol:
-                return
-            tw.setCurrentCell(crow, ccol+1)
+                self.gotoNextHealthyCell(crow, TableCols.NAME)
+                #return
+            ncol = ccol
+            while ncol < (ccount - 1):
+                ncol += 1
+                if not tw.isColumnHidden(ncol):
+                    tw.setCurrentCell(crow, ncol)
+                    break
+            #tw.setCurrentCell(crow, ccol+1)
         elif key == Qt.Key_Backspace:
             tw.setCurrentCell(crow, TableCols.NAME)
             print("BKSPACE");
+        elif key == Qt.Key_Delete:
+            if not ccol in TableParams.CHECK_COLS:
+                return
+            if not self.ConfirmDelete:
+                reply = QMessageBox.question(self, 'FFSportfest', 'Möchten Sie diesen Wert löschen? Wählen Sie "Ja, alle" um diese Abfrage nicht mehr anzuzeigen.', QMessageBox.Yes | QMessageBox.YesToAll | QMessageBox.No, QMessageBox.No)
+                if reply == QMessageBox.YesToAll:
+                    self.ConfirmDelete = True
+                elif reply == QMessageBox.No:
+                    return
+            
+            if ccol == TableCols.SPRINT_V:
+                tw.setItem(crow,  ccol,  QTableWidgetItem("0.0"))
+            elif ccol == TableCols.LAUF_V:
+                tw.setItem(crow,  ccol,  QTableWidgetItem("0:00"))
+            elif ccol == TableCols.SPRUNG_V:
+                tw.setItem(crow,  ccol,  QTableWidgetItem("0.0"))
+            elif ccol == TableCols.WURF_V:
+                tw.setItem(crow,  ccol,  QTableWidgetItem("0.0"))
         elif key == Qt.Key_Space:
             if ccol == TableCols.KRANK:
                 itm = tw.item(crow, ccol)
@@ -657,8 +685,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Wird aufgerufen wenn der Geschlecht-Filter geändert wurde
         """
         self.blankDetails()
-        self.fillTable(str(self.klasseCombo.currentText),  self.getGeschlechtFromLong(p0),  False)
-        print("CurrentIndexChanged: " + p0)
+        self.fillTable(str(self.klasseCombo.currentText()),  self.getGeschlechtFromLong(p0),  False)
     
     @pyqtSlot()
     def on_wurfMeterEdit_editingFinished(self):
@@ -947,6 +974,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if dbLoad:
                 self.addKlasse(klasse)
             if self.doFilter(filterKlasse,  klasse):
+                print("Allowing student, FK: {}, K: {}".format(str(filterKlasse), str(klasse)))
                 for uid, det in schueler.items():
                     self.verifyJSON(det)
                     if not filterGeschlecht == "Alle":
@@ -1097,8 +1125,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Speichert die Datenbank unter einem anderen Namen ab
         """
         opts = QFileDialog.Options()
-        if not self.cfg.getNativeDialogs():
-            opts |= QFileDialog.DontUseNativeDialog
         name, _ = QFileDialog.getSaveFileName(self, "Datenbank speichern unter", os.path.expanduser("~"), "FFD-Datenbank (*.ffd)",  options=opts)
         if name:
             filename = str(name)
@@ -1126,7 +1152,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         Zeigt Informationen über das Programm an
         """
-        QMessageBox.about(self, "Über FFSportfest...",  "<h1>Über FFSportfest</h1><small>Version " + FFSportfest.VERSION + "</small><p>Geschrieben von Fabian Schillig</p><br><code>Dieses Programm ist Freie Software: Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation, Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren veröffentlichten Version, weiterverbreiten und/oder modifizieren.<br><br>Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die GNU General Public License für weitere Details.<br><br>Sie sollten eine Kopie der GNU General Public License zusammen mit diesem Programm erhalten haben. Wenn nicht, siehe <a href='http://www.gnu.org/licenses/'>http://www.gnu.org/licenses/</a>.</code><br><p>© Fabian Schillig 2017-2018. Der Quellcode ist unter <a href='https://github.com/XorgMC/ffx-sportfest'>https://github.com/XorgMC/ffx-sportfest</a> erhältlich.</p>")
+        QMessageBox.about(self, "Über FFSportfest...",  "<h1>Über FFSportfest</h1><small>Version " + FFSportfest.VERSION + " (" + FFSportfest.CODENAME + ")</small><p>Geschrieben von Fabian Schillig</p><br><code>Dieses Programm ist Freie Software: Sie können es unter den Bedingungen der GNU General Public License, wie von der Free Software Foundation, Version 3 der Lizenz oder (nach Ihrer Wahl) jeder neueren veröffentlichten Version, weiterverbreiten und/oder modifizieren.<br><br>Dieses Programm wird in der Hoffnung, dass es nützlich sein wird, aber OHNE JEDE GEWÄHRLEISTUNG, bereitgestellt; sogar ohne die implizite Gewährleistung der MARKTFÄHIGKEIT oder EIGNUNG FÜR EINEN BESTIMMTEN ZWECK. Siehe die GNU General Public License für weitere Details.<br><br>Sie sollten eine Kopie der GNU General Public License zusammen mit diesem Programm erhalten haben. Wenn nicht, siehe <a href='http://www.gnu.org/licenses/'>http://www.gnu.org/licenses/</a>.</code><br><p>© Fabian Schillig 2017-2018. Der Quellcode ist unter <a href='https://github.com/XorgMC/ffx-sportfest'>https://github.com/XorgMC/ffx-sportfest</a> erhältlich.</p>")
     
     @pyqtSlot()
     def on_action_ber_Qt_triggered(self):
@@ -1275,6 +1301,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             reply = QMessageBox.question(self, 'FFSportfest', 'Die Datenbank wurde verändert. Möchten Sie die Änderungen speichern?', QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel, QMessageBox.Cancel)
             if reply == QMessageBox.Save:
                 self.on_actionDatenbank_speichern_triggered()
+            elif reply == QMessageBox.Discard:
+                self.clearRecovery() #TODO: Datenbank sauber schließen
             else:
                 return
         if self.dbPath:
@@ -1285,11 +1313,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if not self.dbf.isVisible():
                 self.dbf.show()
             else:
-                # this will remove minimized status 
-                # and restore window with keeping maximized/normal state
                 self.dbf.setWindowState(self.dbf.windowState() & ~Qt.WindowMinimized | Qt.WindowActive)
-
-                # this will activate the window
                 self.dbf.activateWindow()
     
     @pyqtSlot()
@@ -1316,8 +1340,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
     def portableSaveAs(self):
         opts = QFileDialog.Options()
-        if not self.cfg.getNativeDialogs():
-            opts |= QFileDialog.DontUseNativeDialog
         name, _ = QFileDialog.getSaveFileName(self, "Datenbank speichern unter", os.path.expanduser("~"), "FMD-Datenbank (*.fmd)",  options=opts)
         if name:
             filename = str(name)

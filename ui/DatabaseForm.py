@@ -692,6 +692,13 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         self.loadPD.cancel()
         self.statusBar.showMessage("Datenbank geladen!")
         
+    def validKlasse(self, input):
+        try:
+            float(input)
+        except Exception:
+            return False
+        return True
+        
     def fillTable(self):
         """
         Füllt die Tabelle mit den JSON-Daten
@@ -715,6 +722,9 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                 self.tableWidget.setItem(sc,TableCols.VORNAME, QTableWidgetItem(det['vorname']))
                 self.tableWidget.setItem(sc,TableCols.GESCHLECHT, QTableWidgetItem(det['geschlecht']))
                 self.tableWidget.setItem(sc,TableCols.KLASSE, QTableWidgetItem(klasse))
+                if not self.validKlasse(klasse):
+                    itm = self.tableWidget.item(sc, TableCols.KLASSE)
+                    itm.setBackground(QColor(244, 170, 66))
                 self.tableWidget.setItem(sc,TableCols.SPRINT_V, QTableWidgetItem(str(det['sprint_v'])))
                 self.tableWidget.setItem(sc,TableCols.SPRINT_P, QTableWidgetItem(str(det['sprint_p'])))
                 self.tableWidget.setItem(sc,TableCols.SPRINT_N, QTableWidgetItem(str(det['sprint_n'])))
