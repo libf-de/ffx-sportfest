@@ -714,7 +714,17 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         sc = 0
         for klasse,  schueler in self.JSN.items():
             for uid, det in schueler.items():
-                self.verifyJSON(det)
+                try:
+                    self.verifyJSON(det)
+                except Exception as expt:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Warning)
+                    msg.setText("Die Datenbank konnte nicht überprüft werden - Laden abgebrochen! Die Datenbank ist wahrscheinlich beschädigt.")
+                    msg.setWindowTitle("FFSportfest - Fehler")
+                    msg.setDetailedText("Fehlernachricht:" + str(expt.message))
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
+                    return
                 self.tableWidget.setRowCount(self.tableWidget.rowCount() + 1)
                 iskrank = det['krank']
                 self.tableWidget.setItem(sc,TableCols.UID, QTableWidgetItem(uid))
@@ -959,8 +969,10 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
             if re.match("^([0-9]{1,2})\.([0-9]{1})$",  res):
                 del self.JSN[res]
             else:
-                del me #TODO
-        print(exp.getKlasse())
+                for kst in [ v for v in self.JSN.keys() if v.startswith(res)]:
+                    del self.JSN[kst]
+        self.setChanged(True)
+        self.fillTable()
         #del self.JSN[SKlasse][SUID]
         #QMessageBox.warning(self, "FFSportfest", "Diese Funktion wurde noch nicht implementiert!", QMessageBox.Ok, QMessageBox.Ok)
 
