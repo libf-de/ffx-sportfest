@@ -496,7 +496,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         if self.T1V and self.T2V and self.T3V and self.T4V:
             if not self.fileName is None:
                 try:
-                    with open(self.fileName, 'w') as f:
+                    with open(self.fileName, 'w',  encoding='utf8') as f:
                         json.dump(self.JSN, f, indent=4, sort_keys=True, ensure_ascii=False)
                         self.setChanged(False)
                 except PermissionError as per:
@@ -534,7 +534,7 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                     filename+= ".ffd"
                 print("FN: " + filename)
                 try:
-                    with open(filename, 'w') as f:
+                    with open(filename, 'w',  encoding='utf8') as f:
                         json.dump(self.JSN, f, indent=4, sort_keys=True, ensure_ascii=False)
                     self.fileName = filename
                     self.setChanged(False)

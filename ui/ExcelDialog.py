@@ -408,7 +408,7 @@ class ExcelImporter(QDialog, Ui_Dialog):
             if rt == QMessageBox.No:
                 return
         try:        
-            with open(dbPath, 'w') as f:
+            with open(dbPath, 'w', encoding='utf8') as f:
                 json.dump(self.JSN, f, indent=4, sort_keys=True, ensure_ascii=False)
                 
             msg = QMessageBox()
@@ -584,7 +584,7 @@ class ExcelImporter(QDialog, Ui_Dialog):
 
         if nDbFile:
             try:
-                with open(nDbFile, 'w') as f:
+                with open(nDbFile, 'w',  encoding='utf8') as f:
                         json.dump(self.JSN, f, indent=4, sort_keys=True, ensure_ascii=False)                
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Question)

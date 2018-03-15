@@ -48,7 +48,7 @@ class ExportDialog(QDialog, Ui_Dialog):
             try:
                 klassenstufe = str(self.comboBox.currentText())
                 JSNE = {k:v for (k,v) in self.JSN.items() if k.startswith(klassenstufe)}
-                with open(filename, 'w') as f:
+                with open(filename, 'w',  encoding='utf8') as f:
                     json.dump(JSNE, f, indent=4, sort_keys=True, ensure_ascii=False)
             except PermissionError as per:
                 msg = QMessageBox()

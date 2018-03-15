@@ -866,7 +866,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def considerRecovery(self):
         if self.doRec:
             try:
-                with open(self.pCfg.getRecoverFile(), 'w') as f:
+                with open(self.pCfg.getRecoverFile(), 'w',  encoding='utf8') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
             except Exception as e:
                 msg = QMessageBox()
@@ -951,7 +951,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def saveRec(self):
         if self.doRec:
             try:
-                with open(self.pCfg.getRecoverFile(), 'w') as f:
+                with open(self.pCfg.getRecoverFile(), 'w',  encoding='utf8') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
             except Exception as ex:
                 print("WARN: Could not save recovery file: " + str(ex))
@@ -1103,7 +1103,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 msg.exec_()
             
             try:
-                with open(self.dbPath, 'w') as f:
+                with open(self.dbPath, 'w',  encoding='utf8') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
                     self.setChanged(False)
             except PermissionError as per:
@@ -1132,7 +1132,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 filename+= ".ffd"
             
             try:
-                with open(filename, 'w') as f:
+                with open(filename, 'w',  encoding='utf8') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
                     self.setChanged(False)
             except PermissionError as per:
@@ -1323,7 +1323,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         """
         if self.dbPath:
             try:
-                with open(self.dbPath, 'w') as f:
+                with open(self.dbPath, 'w',  encoding='utf8') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
                     self.setChanged(False)
             except PermissionError as per:
@@ -1347,7 +1347,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 filename+= ".fmd"
             
             try:
-                with open(filename, 'w') as f:
+                with open(filename, 'w',  encoding='utf8') as f:
                     json.dump(self.JSD, f, indent=4, sort_keys=True, ensure_ascii=False)
                     self.setChanged(False)
             except PermissionError as per:
