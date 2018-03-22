@@ -17,6 +17,12 @@
     <file alias="exit">oxygen/16x16/actions/application-exit.png</file>
     <file alias="database">oxygen/16x16/places/server-database.png</file>
   </qresource>
+  <qresource prefix="dialog_buttons">
+    <file alias="help">oxygen/16x16/actions/help-contents.png</file>
+    <file alias="all">oxygen/16x16/status/task-delegate.png</file>
+    <file alias="cancel">oxygen/16x16/status/task-reject.png</file>
+    <file alias="ok">oxygen/16x16/status/task-complete.png</file>
+  </qresource>
   <qresource prefix="toolbar_icons_48">
     <file alias="sort">oxygen/48x48/actions/view-sort-ascending.png</file>
     <file alias="trash">oxygen/48x48/actions/trash-empty.png</file>

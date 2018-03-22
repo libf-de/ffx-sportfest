@@ -28,6 +28,12 @@ class KlasseInputDialog(QDialog, Ui_Dialog):
         self.setupUi(self)
         self.lineEdit.setValidator(QRegExpValidator(QRegExp("^([0-9]{1,2})\.([0-9]{1})$")))
         self.dlgText.setText("<html><head/><body><p><span style=\" font-weight:600; font-style:italic;\">{} {}</span> (Zeile <span style=\" font-weight:600; font-style:italic;\">{}</span>) hat eine ungültige Klasse (<span style=\" font-weight:600; font-style:italic;\">{}</span>). Um fortzufahren geben Sie eine gültige Klasse (z.B. 5.1) ein und bestätigen Sie mit &quot;<span style=\" font-weight:600;\">Ja</span>&quot; (für diesen Eintrag) / &quot;<span style=\" font-weight:600;\">Ja für alle</span>&quot; (für alle folgenden ungültigen Einträge) oder &quot;<span style=\" font-weight:600;\">Abbrechen</span>&quot; um den Vorgang abzubrechen.</p></body></html>".format(vorname, name, zeile, klasse))
+        self.lineEdit.setStyleSheet('QLineEdit { background-color: #f6989d }')
+        self.enableConfirms(False)
+        
+    def enableConfirms(self,  state):
+        self.yesBtn.setEnabled(state)
+        self.yesToAllBtn.setEnabled(state)
     
     @pyqtSlot(QAbstractButton)
     def on_buttonBox_clicked(self, button):
@@ -65,13 +71,40 @@ class KlasseInputDialog(QDialog, Ui_Dialog):
         validator = self.lineEdit.validator()
         state = validator.validate(p0, 0)[0]
         if state == QValidator.Acceptable:
-            self.buttonBox.setEnabled(True)
+            self.enableConfirms(True)
+            #self.buttonBox.setEnabled(True)
             color = '#c4df9b' # green
         elif state == QValidator.Intermediate:
-            self.buttonBox.setEnabled(False)
+            self.enableConfirms(False)
+            #self.buttonBox.setEnabled(False)
             color = '#fff79a' # yellow
         else:
-            self.buttonBox.setEnabled(False)
+            self.enableConfirms(False)
+            #self.buttonBox.setEnabled(False)
             color = '#f6989d' # red
         
         self.lineEdit.setStyleSheet('QLineEdit { background-color: %s }' % color)
+    
+    @pyqtSlot()
+    def on_yesBtn_clicked(self):
+        """
+        Slot documentation goes here.
+        """
+        self.retVal = 2
+        self.accept()
+    
+    @pyqtSlot()
+    def on_yesToAllBtn_clicked(self):
+        """
+        Slot documentation goes here.
+        """
+        self.retVal = 3
+        self.accept()
+    
+    @pyqtSlot()
+    def on_cancelBtn_clicked(self):
+        """
+        Slot documentation goes here.
+        """
+        self.retVal = 1
+        self.reject()
