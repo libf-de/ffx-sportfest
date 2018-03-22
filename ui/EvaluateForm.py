@@ -280,7 +280,6 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         """
         Slot documentation goes here.
         """
-        # TODO: not implemented yet
         dialog = QtPrintSupport.QPrintPreviewDialog()
         dialog.printer().setPageOrientation(QtGui.QPageLayout.Landscape)
         dialog.paintRequested.connect(self.handlePaintRequest)

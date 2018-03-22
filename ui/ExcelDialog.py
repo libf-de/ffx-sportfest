@@ -345,6 +345,9 @@ class ExcelImporter(QDialog, Ui_Dialog):
                                     kls.append(kd.getReturnKlasse())
                                     KLSFB = kd.getReturnKlasse()
                                     warns.append("WARN: Ungültige Klasse »" + str(cell.value) + "« auf Zeile " + str(cell.row) + ": Standardkorrektur auf " + kd.getReturnKlasse() + " gesetzt")
+                            else:
+                                self.showCancelMessage()
+                                return
                         else:
                             warns.append("WARN: Ungültige Klasse »" + str(cell.value) + "« auf Zeile " + str(cell.row) + ": Nehme " + KLSFB + " an")
                             kls.append(KLSFB)
@@ -503,6 +506,7 @@ class ExcelImporter(QDialog, Ui_Dialog):
                         if KLSFB is None:
                             kd = KlasseInputDialog(self.ws[nameRow + str(cell.row)].value, self.ws[vnameRow + str(cell.row)].value,  cell.value, cell.row)
                             if kd.exec_():
+                                print("KID: {}".format(str(kd.getReturnValue())))
                                 if kd.getReturnValue() == 1:
                                     self.showCancelMessage()
                                     return
@@ -513,6 +517,9 @@ class ExcelImporter(QDialog, Ui_Dialog):
                                     kls.append(kd.getReturnKlasse())
                                     KLSFB = kd.getReturnKlasse()
                                     warns.append("WARN: Ungültige Klasse »" + str(cell.value) + "« auf Zeile " + str(cell.row) + ": Standardkorrektur auf " + kd.getReturnKlasse() + " gesetzt")
+                            else:
+                                self.showCancelMessage()
+                                return
                         else:
                             warns.append("WARN: Ungültige Klasse »" + str(cell.value) + "« auf Zeile " + str(cell.row) + ": Nehme " + KLSFB + " an")
                             kls.append(KLSFB)

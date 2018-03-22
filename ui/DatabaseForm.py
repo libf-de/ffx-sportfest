@@ -525,8 +525,6 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         """
         if self.T1V and self.T2V and self.T3V and self.T4V:
             opts = QFileDialog.Options()
-            if not self.cfg.getNativeDialogs():
-                opts |= QFileDialog.DontUseNativeDialog
             name, _ = QFileDialog.getSaveFileName(self, "Datenbank speichern unter", os.path.expanduser("~"), "FFD-Datenbank (*.ffd)",  options=opts)
             if name:
                 filename = str(name)
