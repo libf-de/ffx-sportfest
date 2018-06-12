@@ -4,7 +4,7 @@
 Module implementing MainWindow.
 """
 
-import os,  json, re,  shutil
+import os,  json, re,  shutil, webbrowser
 from PyQt5.QtCore import pyqtSlot,  Qt,  QRegExp
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem, QAbstractItemView, QFileDialog, QMessageBox, QProgressDialog, QHeaderView, QAction
 from PyQt5.QtGui import QColor,  QDoubleValidator,  QRegExpValidator,  QPageLayout, QTextDocument, QTextCursor, QTextTableFormat,  QTextFrameFormat, QFont, QTextBlockFormat
@@ -1418,3 +1418,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Slot documentation goes here.
         """
         self.close()
+    
+    @pyqtSlot()
+    def on_actionHilfe_triggered(self):
+        """
+        Slot documentation goes here.
+        """
+        helpFile = os.path.join(self.pCfg.getExecutablePath(),  "help.html")
+        if not os.path.isfile(helpFile):
+            webbrowser.open("https://xorg.ga/ffsportfest/help.html")
+        else:
+            webbrowser.open(os.path.abspath(helpFile))
+        

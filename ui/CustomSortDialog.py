@@ -13,13 +13,13 @@ from .Ui_CustomSortDialog import Ui_Dialog
 
 class CustomSortDialog(QDialog, Ui_Dialog):
     """
-    Class documentation goes here.
+    Dialog um eigene Sortierung auszuwählen
     """
     def __init__(self, parent=None):
         """
-        Constructor
+        Konstruktor - setzt Überprüfung für Textfeld
         
-        @param parent reference to the parent widget
+        @param parent Referenz zum Elternelement
         @type QWidget
         """
         super(CustomSortDialog, self).__init__(parent)

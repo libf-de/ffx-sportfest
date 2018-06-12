@@ -53,14 +53,6 @@ if __name__ == "__main__":
         msg.setStandardButtons(QMessageBox.Ok)
         msg.setWindowFlags(Qt.WindowStaysOnTopHint)
         msg.exec_()
-        
-    msg = QMessageBox()
-    msg.setIcon(QMessageBox.Information)
-    msg.setText("Dies ist eine Vorabversion, welche nicht für den praktischen Einsatz gedacht ist! Sie sollte zum Testen verwendet werden um evtl. vorhandene Fehler zu finden und zu beheben! Das Programm kann instabil laufen (abstürzen) (evtl. Datenverlust!) und einige Funktionen sind eventuell noch nicht verfügbar.")
-    msg.setWindowTitle("FFSportfest - Vorabversion")
-    msg.setStandardButtons(QMessageBox.Ok)
-    msg.setWindowFlags(Qt.WindowStaysOnTopHint)
-    msg.exec_()
     
     ui = MainWindow(results, splash)
     ui.show()

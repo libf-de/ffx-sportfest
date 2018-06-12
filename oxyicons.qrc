@@ -17,6 +17,9 @@
     <file alias="exit">oxygen/16x16/actions/application-exit.png</file>
     <file alias="database">oxygen/16x16/places/server-database.png</file>
   </qresource>
+  <qresource prefix="help">
+    <file>help.html</file>
+  </qresource>
   <qresource prefix="dialog_buttons">
     <file alias="help">oxygen/16x16/actions/help-contents.png</file>
     <file alias="all">oxygen/16x16/status/task-delegate.png</file>

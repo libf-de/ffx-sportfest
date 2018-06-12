@@ -75,18 +75,23 @@ class TableColors:
 class TableParams:
     CHECK_COLS = [ TableCols.SPRINT_V,  TableCols.LAUF_V, TableCols.SPRUNG_V,  TableCols.WURF_V ]
     HEADER_LBL = [ "UID", "Name",  "Vorname",  "⚤",  "Klasse",  "Sprint",  "Sprint (Pkt)",  "Sprint (Note)",  "Lauf", "Lauf (Pkt)",  "Lauf (Note)",   "Sprung", "Sprung (Pkt)", "Sprung (Note)",  "Wurf/Stoß",  "W/S (Pkt)",  "W/S (Note)",  "Punkte", "Ø Note",  "Krank"]
-    HEADER56_LBL = [ "UID", "Name",  "Vorname",  "⚤",  "Klasse",  "Sprint",  "Sprint (Pkt)",  "Sprint (Note)",  "Lauf", "Lauf (Pkt)",  "Lauf (Note)",   "Sprung", "Sprung (Pkt)", "Sprung (Note)",  "Wurf",  "Wurf (Pkt)",  "Wurf (Note)",  "Punkte", "Ø Note",  "Krank"]
-    HEADER7_LBL = [ "UID", "Name",  "Vorname",  "⚤",  "Klasse",  "Sprint",  "Sprint (Pkt)",  "Sprint (Note)",  "Lauf", "Lauf (Pkt)",  "Lauf (Note)",   "Sprung", "Sprung (Pkt)", "Sprung (Note)",  "Stoß",  "Stoß (Pkt)",  "Stoß (Note)",  "Punkte", "Ø Note",  "Krank"]
+    HEADER56_LBL = [ "UID", "Name",  "Vorname",  "⚤",  "Klasse",  "Sprint 50m",  "Sprint (Pkt)",  "Sprint (Note)",  "Lauf", "Lauf (Pkt)",  "Lauf (Note)",   "Sprung", "Sprung (Pkt)", "Sprung (Note)",  "Wurf",  "Wurf (Pkt)",  "Wurf (Note)",  "Punkte", "Ø Note",  "Krank"]
+    HEADER7_LBL = [ "UID", "Name",  "Vorname",  "⚤",  "Klasse",  "Sprint 75m",  "Sprint (Pkt)",  "Sprint (Note)",  "Lauf", "Lauf (Pkt)",  "Lauf (Note)",   "Sprung", "Sprung (Pkt)", "Sprung (Note)",  "Stoß",  "Stoß (Pkt)",  "Stoß (Note)",  "Punkte", "Ø Note",  "Krank"]
     PRINTM_LBL = [ "Name",  "Vorname",  "Klasse",  "Sprint",  "Pkt",  "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wu/St",  "Pkt", "Nt",  "Punkte",  "Note"]
     PRINTM5_LBL = [ "Name",  "Vorname",  "Klasse",  "50m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wurf",  "Pkt", "Nt",  "Punkte",  "Note"]
     PRINTM6_LBL = [ "Name",  "Vorname",  "Klasse",  "50m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wurf",  "Pkt", "Nt",  "Punkte",  "Note"]
     PRINTM7_LBL = [ "Name",  "Vorname",  "Klasse",  "75m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Stoß",  "Pkt", "Nt",  "Punkte",  "Note"]
     
-    PRINTE_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "Sprint",  "Pkt",  "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wu/St",  "Pkt", "Nt",  "Punkte",  "Note"]
-    PRINTE5_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "50m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wurf",  "Pkt", "Nt",  "Punkte",  "Note"]
-    PRINTE6_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "50m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wurf",  "Pkt", "Nt",  "Punkte",  "Note"]
-    PRINTE7_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "75m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Stoß",  "Pkt", "Nt",  "Punkte",  "Note"]
+    #PRINTE_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "Sprint",  "Pkt",  "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wu/St",  "Pkt", "Nt",  "Punkte",  "Note"]
+    #PRINTE5_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "50m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wurf",  "Pkt", "Nt",  "Punkte",  "Note"]
+    #PRINTE6_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "50m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Wurf",  "Pkt", "Nt",  "Punkte",  "Note"]
+    #PRINTE7_LBL = [ "#", "Name",  "Vorname",  "Klasse",  "75m Sp",  "Pkt", "Nt",  "Lauf",  "Pkt", "Nt",  "Sprung",  "Pkt", "Nt",  "Stoß",  "Pkt", "Nt",  "Punkte",  "Note"]
+    
+    PRINTE_LBL = [ "#", "Name",  "Vorname",  "Klasse", "",  "Sprt",  "Pkt",  "Nt", "", "Lauf",  "Pkt", "Nt", "",  "WSpr",  "Pkt", "Nt", "", "Wu/St",  "Pkt", "Nt", "", "∑ Pkt",  "Note"]
+    PRINTE5_LBL = [ "#", "Name",  "Vorname",  "Klasse","",  "50m",  "Pkt", "Nt", "",  "Lauf",  "Pkt", "Nt", "", "WSpr",  "Pkt", "Nt",  "", "Wurf",  "Pkt", "Nt", "", "∑ Pkt",  "Note"]
+    PRINTE6_LBL = [ "#", "Name",  "Vorname",  "Klasse", "", "50m",  "Pkt", "Nt", "", "Lauf",  "Pkt", "Nt",  "", "WSpr",  "Pkt", "Nt",  "", "Wurf",  "Pkt", "Nt",  "", "∑ Pkt",  "Note"]
+    PRINTE7_LBL = [ "#", "Name",  "Vorname",  "Klasse", "", "75m",  "Pkt", "Nt",  "", "Lauf",  "Pkt", "Nt",  "", "WSpr",  "Pkt", "Nt",  "", "Stoß",  "Pkt", "Nt",  "", "∑ Pkt",  "Note"]
 
 class FFSportfest:
-    VERSION =  "0.2 BM"
-    CODENAME = "Beta (Master)"
+    VERSION =  "1.0"
+    CODENAME = "Centaur"

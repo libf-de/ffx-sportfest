@@ -5,7 +5,7 @@ Module implementing EvalWindow.
 """
 
 from PyQt5.QtCore import pyqtSlot,  Qt
-from PyQt5.QtGui import QColor
+from PyQt5.QtGui import QColor, QTextBlockFormat, QBrush
 from PyQt5.QtWidgets import QMainWindow, QTableWidgetItem,  QAbstractItemView,  QDialog,  QMessageBox, QFileDialog, QHeaderView
 from lib.Delegates import ReadonlyDelegate
 from lib.Constants import TableCols, ETableCols,  TableHide,  TableParams
@@ -77,7 +77,8 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         tW.setColumnHidden(TableCols.WURF_N,  TableHide.WURF_N)
         tW.setColumnHidden(TableCols.PUNKTE,   TableHide.PUNKTE)
         tW.setColumnHidden(TableCols.NOTE,   TableHide.NOTE)
-        tW.setColumnHidden(TableCols.KRANK,  TableHide.KRANK)
+        #tW.setColumnHidden(TableCols.KRANK,  TableHide.KRANK)
+        tW.setColumnHidden(TableCols.KRANK,  True)
         
         #tW.setItemDelegateForColumn(TableCols.SPRINT_V,  NumDelegate(self))
         #tW.setItemDelegateForColumn(TableCols.LAUF_V,  TimeDelegate(self))
@@ -290,9 +291,23 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
             return False
         return self.tableWidget.item(row,  TableCols.KRANK).checkState() == Qt.Checked
         
-    def getPrintHeader(self):
+    def getDisplayHeader(self, nindex): #TODO: Header
         #sK = str(self.klasseCombo.currentText) TODO
-        sK = "Alle"
+        #sK = "Alle"
+        sK = self.Klassen[nindex]
+        if sK.lower() == "alle":
+            return TableParams.HEADER_LBL
+        elif sK.startswith("5"):
+            return TableParams.HEADER56_LBL
+        elif sK.startswith("6"):
+            return TableParams.HEADER56_LBL
+        elif sK.startswith("7"):
+            return TableParams.HEADER7_LBL
+        
+    def getPrintHeader(self): #TODO: Header
+        #sK = str(self.klasseCombo.currentText) TODO
+        #sK = "Alle"
+        sK = self.Klassen[self.filterSecondCombo.currentIndex()]
         if sK.lower() == "alle":
             return TableParams.PRINTE_LBL
         elif sK.startswith("5"):
@@ -320,7 +335,9 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         tfmt.setBorder(2)
         tfmt.setBorderStyle(QtGui.QTextFrameFormat.BorderStyle_Solid)
         tfmt.setBorderBrush(QColor(0, 0,  0))
-        cursor.insertText("Sportfest am " + self.getGermanDayName(int(now.strftime("%w"))) + ", den " + now.strftime("%d.%m.%Y") + "\n")
+        #cursor.insertHtml("<style>table > tr {background-color: #ff0000;} </style>")
+        #cursor.insertText("Sportfest am " + self.getGermanDayName(int(now.strftime("%w"))) + ", den " + now.strftime("%d.%m.%Y") + "\n")
+        cursor.insertHtml("<h1>Sportfest am " + self.getGermanDayName(int(now.strftime("%w"))) + ", den " + now.strftime("%d.%m.%Y") + "</h1><br>")
         cursor.movePosition(QtGui.QTextCursor.NextBlock)
         if self.sortFirstCombo.currentText() == "Punkte":
             cursor.insertText("Ausdruck: Platzierung " + self.filterFirstCombo.currentText() + " " + self.filterSecondCombo.currentText() + "\n\n")
@@ -328,7 +345,8 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
             cursor.insertText("Ausdruck: " + self.filterFirstCombo.currentText() + " " + self.filterSecondCombo.currentText() + ", sortiert nach " + self.sortFirstCombo.currentText() + "/" + self.sortSecondCombo.currentText() + "\n\n")
         cursor.movePosition(QtGui.QTextCursor.NextBlock)
         cursor.movePosition(QtGui.QTextCursor.NextBlock)
-        table = cursor.insertTable(rows + 1, 18,  tfmt)
+        #table = cursor.insertTable(rows + 1, 18,  tfmt)
+        table = cursor.insertTable(rows + 1, 23,  tfmt)
         format = table.format()
         format.setHeaderRowCount(1)
         table.setFormat(format)
@@ -336,12 +354,16 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         format.setFontWeight(QtGui.QFont.Bold)
         header = self.getPrintHeader()
         print(header)
-        for c in range(0, 18):
+        for c in range(0, 23):
             cursor.setCharFormat(format)
             cursor.insertText(header[c])
             cursor.movePosition(QtGui.QTextCursor.NextCell)
         aCen = QtGui.QTextBlockFormat()
         aCen.setAlignment(Qt.AlignCenter)
+        darkChr = QtGui.QTextCharFormat()
+        darkChr.setBackground(QColor(242,242,242))
+        darkerChr = QtGui.QTextCharFormat()
+        darkerChr.setBackground(QColor(216,216,216))
         for row in range(rows):
             if self.isRowKrank(row):
                 continue
@@ -353,11 +375,15 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.KLASSE).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
+            cursor.insertText("")
+            cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.SPRINT_V).text() + "s")
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.SPRINT_P).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.SPRINT_N).text())
+            cursor.movePosition(QtGui.QTextCursor.NextCell)
+            cursor.insertText("")
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.LAUF_V).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
@@ -365,11 +391,15 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.LAUF_N).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
+            cursor.insertText("")
+            cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.SPRUNG_V).text() + "m")
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.SPRUNG_P).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.SPRUNG_N).text())
+            cursor.movePosition(QtGui.QTextCursor.NextCell)
+            cursor.insertText("")
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.WURF_V).text() + "m")
             cursor.movePosition(QtGui.QTextCursor.NextCell)
@@ -377,11 +407,14 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.WURF_N).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
+            cursor.insertText("")
+            cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.insertText(self.tableWidget.item(row, TableCols.PUNKTE).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
             cursor.setBlockFormat(aCen)
             cursor.insertText(self.tableWidget.item(row, TableCols.NOTE).text())
             cursor.movePosition(QtGui.QTextCursor.NextCell)
+        print(document.toHtml())
         return document
         
     def getGeschlechtFromLong(self,  long):
@@ -425,6 +458,8 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
         """
         self.Filter1 = self.Klassen[index]
         self.fillTable(self.Filter1,  self.Filter2)
+        
+        self.tableWidget.setHorizontalHeaderLabels( self.getDisplayHeader(index) )
         self.resortData()
     
     @pyqtSlot()
@@ -516,6 +551,7 @@ class EvalWindow(QMainWindow, Ui_MainWindow):
             msg.exec_()
             return
         
+        self.sortFirstCombo.setCurrentIndex(1)
         self.tableWidget.sortItems(ETableCols.PUNKTE,  Qt.DescendingOrder)
         
         #PLACE_NUM = 3

@@ -222,6 +222,8 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
         if len(self.JSN[SKlasse]) == 0: #Klasse aus Datenbank löschen wenn keine weiteren Schüler enthalten sind
                     del self.JSN[SKlasse]
                     
+        self.actionSort.setEnabled(True)
+        self.sortingEnabled = True
         self.setChanged(True)
                     
     def getFilename(self):
@@ -391,11 +393,12 @@ class DatabaseEditor(QMainWindow, Ui_MainWindow):
                 timer.timeout.connect(self.resetDoubleEnter)
                 timer.start(2000)
         else:
+            self.tableWidget.setCurrentCell(crow+1, ccol)
             #if self.tableWidget.item(crow+1,  TableCols.KRANK).checkState() == Qt.Checked:
-            if self.istKrank(self.tableWidget.item(crow+1,  TableCols.KRANK).text()):
-                self.gotoNextHealthyCell(crow+1,  ccol)
-            else:
-                self.tableWidget.setCurrentCell(crow+1, ccol)
+            #if self.istKrank(self.tableWidget.item(crow+1,  TableCols.KRANK).text()):
+                #self.gotoNextHealthyCell(crow+1,  ccol)
+            #+else:
+                #self.tableWidget.setCurrentCell(crow+1, ccol)
             
     def resetDoubleEnter(self):
         """
